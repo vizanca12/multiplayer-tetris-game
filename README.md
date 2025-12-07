@@ -34,4 +34,5 @@ make
 
 ## ✒️ Auteurs
 
-Réalisé par Joaquim Gaspar et Leonardo Picoli
+
+Réalisé par Vinicius Zancheta et Edilberto
