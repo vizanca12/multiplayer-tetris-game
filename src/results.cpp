@@ -64,7 +64,7 @@ void Results::render(int score, int linesCleared, bool win)
     string str_score = "Your score: " + to_string(score);
     string str_lines = "Lines cleared: " + to_string(linesCleared);
     string enter = "Press enter to continue";
-    string madeWithLove = "Made with <3 by Leo and Magro";
+    string madeWithLove = "Made by Vizanca e Edi";
 
     bg->render();
 

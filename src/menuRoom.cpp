@@ -87,7 +87,7 @@ void MenuRoom::render()
     }
 
     string backspace = "Press backspace to leave room";
-    string madeWithLove = "Made with <3 by Leo and Magro";
+    string madeWithLove = "Made by Vizanca e Edi";
 
     bg->render();
 

@@ -72,7 +72,7 @@ void Menu::render()
     string multiplayer = "2. Multiplayer";
     string quit = "3. Quit";
     string str_choice = ">";
-    string madeWithLove = "Made with <3 by Leo and Magro";
+    string madeWithLove = "Made by Vizanca e Edi";
 
     bg->render();
 
