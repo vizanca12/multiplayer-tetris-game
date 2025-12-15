@@ -9,7 +9,7 @@ Text::Text(int fontSize)
         exit(1);
     }
 
-    this->font = TTF_OpenFont("./fonts/RobotoMono-Regular.ttf", fontSize);
+    this->font = TTF_OpenFont("./fonts/Ubuntu-Regular.ttf", fontSize);
 
     if (this->font == nullptr)
     {

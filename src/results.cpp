@@ -54,12 +54,12 @@ void Results::input()
 void Results::render(int score, int linesCleared, bool win)
 {
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    
+    SDL_SetRenderDrawColor(renderer, 15, 23, 42, 255);
     SDL_RenderClear(renderer);
 
     string results = "Results of";
     string tetris = "TETRIS";
-    string oldskool = "OLDSKOOL";
     string win_lose = win ? "Congratulations, you won!" : "Sorry, you lost!";
     string str_score = "Your score: " + to_string(score);
     string str_lines = "Lines cleared: " + to_string(linesCleared);
@@ -70,7 +70,6 @@ void Results::render(int score, int linesCleared, bool win)
 
     textSmall->drawCenter(0, 50, WINDOW_WIDTH_MENU, 50, results, renderer);
     textBig->drawCenter(0, 100, WINDOW_WIDTH_MENU, 100, tetris, renderer);
-    textBig->drawCenter(0, 160, WINDOW_WIDTH_MENU, 160, oldskool, renderer);
 
     textSmall->drawCenter(0, 300, WINDOW_WIDTH_MENU, 300, win_lose, renderer);
     textSmall->drawCenter(0, 350, WINDOW_WIDTH_MENU, 350, str_score, renderer);

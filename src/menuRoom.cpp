@@ -67,7 +67,6 @@ void MenuRoom::render()
 
     string welcomeText = "Welcome to";
     string tetris = "TETRIS";
-    string oldskool = "OLDSKOOL";
     string msg1 = "Connected to server!";
     string msg2 = "Waiting for other players";
     string msg3 = "Players in the room: " + playersInTheRoom;
@@ -93,7 +92,6 @@ void MenuRoom::render()
 
     textSmall->drawCenter(0, 50, WINDOW_WIDTH_MENU, 50, welcomeText, renderer);
     textBig->drawCenter(0, 100, WINDOW_WIDTH_MENU, 100, tetris, renderer);
-    textBig->drawCenter(0, 160, WINDOW_WIDTH_MENU, 160, oldskool, renderer);
 
     textSmall->drawCenter(0, 300, WINDOW_WIDTH_MENU, 300, msg1, renderer);
     textSmall->drawCenter(0, 350, WINDOW_WIDTH_MENU, 350, msg2, renderer);

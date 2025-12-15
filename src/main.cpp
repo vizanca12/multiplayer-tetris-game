@@ -14,6 +14,7 @@
 #include <menuRoom.hpp>
 #include <mutex>
 #include "results.hpp"
+#include "tetrisAI.hpp"
 
 using namespace std;
 
@@ -74,7 +75,6 @@ void input(TetrisMap *tetrisMap)
     }
 }
 
-// Responsable for getting enemy map from server and to send our map to the server
 void handleClient(Client *client, TetrisMap *tetrisMap)
 {
     bool multiplayerGameOver = false;
@@ -220,12 +220,179 @@ void handleClientRoom(MenuRoom *menuRoom, Client *client)
         menuRoom->setStatus(MENU_ROOM_UNAVAILABLE);
 }
 
+void renderVsAI(TetrisMap *playerMap, TetrisMap *aiMap, SDL_Renderer *renderer)
+{
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+    
+    // Draw player map
+    playerMap->draw(renderer);
+    
+    // Get AI map and set it as enemy map for display
+    char aiMapData[MATRIX_WIDTH * MATRIX_HEIGHT];
+    aiMap->getMap(aiMapData);
+    
+    // Copy AI map to player's enemy map for rendering
+    char *enemyMap = playerMap->enemyMap();
+    for (int i = 0; i < MATRIX_WIDTH * MATRIX_HEIGHT; i++)
+    {
+        enemyMap[i] = aiMapData[i];
+    }
+    
+    SDL_RenderPresent(renderer);
+}
+
+void inputVsAI(TetrisMap *tetrisMap, bool *running)
+{
+    SDL_Event event;
+    while (SDL_PollEvent(&event))
+    {
+        if (event.type == SDL_QUIT)
+        {
+            *running = false;
+            windowOpen = false;
+        }
+        if (event.key.state == SDL_PRESSED)
+        {
+            switch (event.key.keysym.sym)
+            {
+            case SDLK_z:
+                tetrisMap->tetriminoAction(ROTATE_LEFT);
+                break;
+            case SDLK_x:
+                tetrisMap->tetriminoAction(ROTATE_RIGHT);
+                break;
+            case SDLK_c:
+                tetrisMap->changeHold();
+                break;
+            case SDLK_LEFT:
+                tetrisMap->tetriminoAction(MOVE_LEFT);
+                break;
+            case SDLK_RIGHT:
+                tetrisMap->tetriminoAction(MOVE_RIGHT);
+                break;
+            case SDLK_UP:
+                tetrisMap->tetriminoAction(ROTATE_RIGHT);
+                break;
+            case SDLK_DOWN:
+                tetrisMap->tetriminoAction(MOVE_DOWN);
+                break;
+            case SDLK_SPACE:
+                tetrisMap->tetriminoAction(DROP);
+                break;
+            case SDLK_ESCAPE:
+                *running = false;
+                windowOpen = false;
+                break;
+            }
+        }
+    }
+}
+
+void handleAIGame(TetrisMap *playerMap, TetrisMap *aiMap, TetrisAI *ai, bool *running)
+{
+    while (*running && !playerMap->isGameOver() && !aiMap->isGameOver())
+    {
+        usleep(16000); // ~60 FPS tick rate for AI
+
+        // AI makes its move
+        ai->makeMove();
+        aiMap->tick();
+
+        // Exchange lines between player and AI
+        int playerLines = playerMap->getBufferLines();
+        if (playerLines < 0)
+        {
+            aiMap->addBufferLines(-playerLines);
+            playerMap->resetBufferLines();
+        }
+
+        int aiLines = aiMap->getBufferLines();
+        if (aiLines < 0)
+        {
+            playerMap->addBufferLines(-aiLines);
+            aiMap->resetBufferLines();
+        }
+    }
+
+    *running = false;
+}
+
+void runTetrisVsAI()
+{
+    // Create both maps - player and AI
+    TetrisMap *playerMap = new TetrisMap(true);  // extended for showing enemy
+    TetrisMap *aiMap = new TetrisMap(false);
+    TetrisAI *ai = new TetrisAI(aiMap);
+    ai->setSpeed(200); // AI move delay in ms
+
+    SDL_Renderer *renderer;
+    SDL_Window *window;
+
+    SDL_Init(SDL_INIT_EVERYTHING);
+    SDL_CreateWindowAndRenderer(WINDOW_WIDTH_MULTIPLAYER, WINDOW_HEIGHT, 0, &window, &renderer);
+    SDL_SetWindowTitle(window, "Tetris - VS IA");
+    windowOpen = true;
+
+    bool running = true;
+
+    while (running && windowOpen && !playerMap->isGameOver() && !aiMap->isGameOver())
+    {
+        // Handle player input
+        inputVsAI(playerMap, &running);
+        
+        // Update player
+        playerMap->tick();
+        
+        // Update AI - runs in same thread for safety
+        ai->makeMove();
+        aiMap->tick();
+
+        // Exchange lines between player and AI
+        int playerLines = playerMap->getBufferLines();
+        if (playerLines < 0)
+        {
+            aiMap->addBufferLines(-playerLines);
+            playerMap->resetBufferLines();
+        }
+
+        int aiLines = aiMap->getBufferLines();
+        if (aiLines < 0)
+        {
+            playerMap->addBufferLines(-aiLines);
+            aiMap->resetBufferLines();
+        }
+        
+        // Render both maps
+        renderVsAI(playerMap, aiMap, renderer);
+        
+        // Small delay to control frame rate
+        SDL_Delay(16); // ~60 FPS
+    }
+
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+
+    // Show results
+    int score, linesCleared, level;
+    playerMap->getGameStatus(&score, &linesCleared, &level);
+    
+    bool playerWon = aiMap->isGameOver() && !playerMap->isGameOver();
+    Results results(score, linesCleared, playerWon);
+
+    delete playerMap;
+    delete aiMap;
+    delete ai;
+}
+
 int main(int argc, char *argv[])
 {
     srand((unsigned)time(NULL));
     const char *hostname = argv[1];
     int option = 0;
-    while (option != 2)
+    while (option != 3)
     {
         Menu menu;
 
@@ -263,6 +430,11 @@ int main(int argc, char *argv[])
                     // client->disconnect();
                 }
             }
+        }
+
+        if (option == 2)
+        {
+            runTetrisVsAI();
         }
     }
 

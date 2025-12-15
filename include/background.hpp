@@ -22,6 +22,7 @@ private:
     vector<Tetrimino *> tetriminosBg;
     time_t start_fall;
     time_t start_new;
+    Uint32 startTime;
     SDL_Renderer *renderer;
 };
 

@@ -1,7 +1,7 @@
 #include <menu.hpp>
 #include <globals.hpp>
 
-#define MAX_CHOICES 3
+#define MAX_CHOICES 4
 
 Menu::Menu()
 {
@@ -62,15 +62,16 @@ void Menu::input()
 void Menu::render()
 {
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    
+    SDL_SetRenderDrawColor(renderer, 15, 23, 42, 255);
     SDL_RenderClear(renderer);
 
     string welcomeText = "Welcome to";
     string tetris = "TETRIS";
-    string oldskool = "OLDSKOOL";
     string singleplayer = "1. Singleplayer";
     string multiplayer = "2. Multiplayer";
-    string quit = "3. Quit";
+    string vsIA = "3. Vs IA";
+    string quit = "4. Quit";
     string str_choice = ">";
     string madeWithLove = "Made by Vizanca e Edi";
 
@@ -78,12 +79,13 @@ void Menu::render()
 
     textSmall->drawCenter(0, 50, WINDOW_WIDTH_MENU, 50, welcomeText, renderer);
     textBig->drawCenter(0, 100, WINDOW_WIDTH_MENU, 100, tetris, renderer);
-    textBig->drawCenter(0, 160, WINDOW_WIDTH_MENU, 160, oldskool, renderer);
+    
 
     textSmall->drawStart(50, choice * 50 + 285, str_choice, renderer);
     textSmall->drawCenter(0, 300, WINDOW_WIDTH_MENU, 300, singleplayer, renderer);
     textSmall->drawCenter(0, 350, WINDOW_WIDTH_MENU, 350, multiplayer, renderer);
-    textSmall->drawCenter(0, 400, WINDOW_WIDTH_MENU, 400, quit, renderer);
+    textSmall->drawCenter(0, 400, WINDOW_WIDTH_MENU, 400, vsIA, renderer);
+    textSmall->drawCenter(0, 450, WINDOW_WIDTH_MENU, 450, quit, renderer);
 
     textSmaller->drawCenter(0, 550, WINDOW_WIDTH_MENU, 550, madeWithLove, renderer);
 
