@@ -79,6 +79,8 @@ void handleClient(Client *client, TetrisMap *tetrisMap)
 {
     bool multiplayerGameOver = false;
     int mapSize = MATRIX_WIDTH * MATRIX_HEIGHT;
+
+    // Loop principal enquanto o jogador está vivo
     while (!tetrisMap->isGameOver() && !multiplayerGameOver && windowOpen)
     {
         usleep(50000); // Sleep for 50ms
@@ -87,8 +89,10 @@ void handleClient(Client *client, TetrisMap *tetrisMap)
         char code = CODE_PLAYER_MAP;
         char my_map[mapSize];
         tetrisMap->getMap(my_map);
-        client->send(&code, 1);
-        client->send(my_map, mapSize);
+        
+        // Verifica se conseguiu enviar. Se falhar, desconecta.
+        if (client->send(&code, 1) <= 0) { multiplayerGameOver = true; break; }
+        if (client->send(my_map, mapSize) <= 0) { multiplayerGameOver = true; break; }
 
         /* Send buffer lines*/
         int bufferLines = tetrisMap->getBufferLines();
@@ -101,9 +105,23 @@ void handleClient(Client *client, TetrisMap *tetrisMap)
             tetrisMap->resetBufferLines();
         }
 
-        client->recv(&code, 1);
+        // --- CORREÇÃO AQUI: Verificar se o servidor mandou algo ou fechou ---
+        // Se recv retornar <= 0, o servidor caiu/fechou. Tratamos como Fim de Jogo.
+        int bytes_read = client->recv(&code, 1);
+        
+        if (bytes_read <= 0) 
+        {
+            multiplayerGameOver = true;
+            break; 
+        }
+
+        // Se leu com sucesso, processa o código
         if (code == CODE_PLAYER_MAP)
+        {
+            // Para lógica de 4 jogadores (Broadcast), adicione a leitura do ID aqui se tiver implementado
+            // client->recv(&id, 1); 
             client->recv(tetrisMap->enemyMap(), mapSize);
+        }
         else if (code == CODE_PLAYER_LINES)
         {
             char buf = 0;
@@ -112,31 +130,46 @@ void handleClient(Client *client, TetrisMap *tetrisMap)
             tetrisMap->addBufferLines(bufferLines);
         }
         else if (code == CODE_GAME_OVER)
+        {
             multiplayerGameOver = true;
+        }
     }
 
     if (multiplayerGameOver)
-        cout << "You won, congratulations!" << endl;
+        cout << "Game Over! (Winner or Connection Closed)" << endl;
     else if (tetrisMap->isGameOver())
     {
         char code = CODE_PLAYER_DEAD;
         client->send(&code, 1);
-        cout << "You lost, keep trying and one day you will be a Tetris Pro!" << endl;
+        cout << "You lost, keep trying!" << endl;
     }
 
-    // While to keep watchin others
+    // Loop de espectador (quando você morre mas o jogo continua)
     while (!multiplayerGameOver && windowOpen)
     {
         usleep(50000); // Sleep for 50ms
         char code = CODE_PLAYER_MAP;
-        client->recv(&code, 1);
+        
+        // --- CORREÇÃO AQUI TAMBÉM ---
+        int res = client->recv(&code, 1);
+        
+        if (res <= 0) // Servidor fechou a conexão
+        {
+            multiplayerGameOver = true;
+            break;
+        }
+
         if (code == CODE_PLAYER_MAP)
             client->recv(tetrisMap->enemyMap(), mapSize);
         else if (code == CODE_GAME_OVER)
             multiplayerGameOver = true;
     }
 
-    windowOpen = false;
+    // NÃO feche a janela aqui se quiser ver os resultados!
+    // windowOpen = false; <--- REMOVA ou COMENTE ESTA LINHA se ela existir no final
+    
+    // Apenas sinalize que o loop gráfico deve parar, mas deixe o main criar a tela de Results
+    windowOpen = false; 
 }
 
 void runTetrisMultiplayer(Client *client)

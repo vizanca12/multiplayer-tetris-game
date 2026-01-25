@@ -165,8 +165,12 @@ void TetrisServer::handle(Player *player)
     mtx.lock();
 
     std::cout << "Player disconnected " << player->get_socket() << std::endl;
-    // Removes player from array and closes the socket
     room->remove(player);
+    
+    // Adicione esta pequena pausa antes de desconectar
+    // Isso dá tempo do "Game Over" chegar no cliente
+    usleep(100000); // 100ms
+    
     server->disconnect(player->get_socket());
 
     mtx.unlock();
@@ -189,6 +193,7 @@ void TetrisServer::handle(Player *player)
         else
             init_watch();
     }
+   
 }
 
 void TetrisServer::broadcast(char code, char *message, int msg_size)
