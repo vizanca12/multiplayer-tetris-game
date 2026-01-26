@@ -59,6 +59,10 @@ Mino TetrisMap::at(int row, int col)
     return m_matrix[row + 4][col + 2];
 }
 
+void TetrisMap::setRenderOffset(int offset) {
+    m_renderOffset = offset;
+}
+
 void TetrisMap::set(int row, int col, Mino m)
 {
     m_matrix[row + 4][col + 2] = m;
@@ -82,9 +86,9 @@ void TetrisMap::draw(SDL_Renderer *renderer)
     {
         SDL_RenderDrawLine(
             renderer,
-            TETRIS_MAP_INIT_X,
+            TETRIS_MAP_INIT_X + m_renderOffset,
             row * TILE_SIZE + TETRIS_MAP_INIT_Y,
-            TETRIS_MAP_WIDTH + TETRIS_MAP_INIT_X,
+            TETRIS_MAP_WIDTH + TETRIS_MAP_INIT_X + m_renderOffset,
             row * TILE_SIZE + TETRIS_MAP_INIT_Y);
     }
 
@@ -92,20 +96,27 @@ void TetrisMap::draw(SDL_Renderer *renderer)
     {
         SDL_RenderDrawLine(
             renderer,
-            TETRIS_MAP_INIT_X + col * TILE_SIZE,
+            TETRIS_MAP_INIT_X + col * TILE_SIZE + m_renderOffset,
             TETRIS_MAP_INIT_Y,
-            col * TILE_SIZE + TETRIS_MAP_INIT_X,
+            col * TILE_SIZE + TETRIS_MAP_INIT_X + m_renderOffset,
             TETRIS_MAP_HEIGHT + TETRIS_MAP_INIT_Y);
     }
+    if(tetrimino) {
+        // Renderiza o Tetrimino atual manualmente com offset
+        // (Nota: sua classe Tetrimino tem dois métodos draw. Vamos usar o que aceita x,y)
+        int tx = tetrimino->pos().col() * TILE_SIZE + TETRIS_MAP_INIT_X + m_renderOffset;
+        int ty = tetrimino->pos().row() * TILE_SIZE + TETRIS_MAP_INIT_Y;
+        tetrimino->draw(renderer, tx, ty);
+    }
 
-    tetrimino->draw(renderer);
+    //tetrimino->draw(renderer);
 
     for (auto row = 0; row < MATRIX_HEIGHT; row++)
     {
         for (auto col = 0; col < MATRIX_WIDTH; col++)
         {
             Mino m = at(row, col);
-            int x = col * TILE_SIZE + TETRIS_MAP_INIT_X;
+            int x = col * TILE_SIZE + TETRIS_MAP_INIT_X + m_renderOffset;
             int y = row * TILE_SIZE + TETRIS_MAP_INIT_Y;
             m.draw(renderer, x, y);
         }
@@ -313,16 +324,33 @@ void TetrisMap::tick()
 void TetrisMap::drawGameStatus(SDL_Renderer *renderer)
 {
     int y = WINDOW_HEIGHT / 2;
-    text->drawStart(10, y, "SCORE", renderer);
-    text->drawEnd(TETRIS_MAP_INIT_X - 10, y, to_string(score), renderer);
+    int startX, endX;
+
+    if (m_mirrorLayout) 
+    {
+        // JOGADOR 2: Desenha na DIREITA do tabuleiro
+        // Inicia depois do tabuleiro + offset
+        startX = TETRIS_MAP_INIT_X + TETRIS_MAP_WIDTH + m_renderOffset + 10;
+        // Termina na largura da barra lateral (assumindo tamanho similar ao INIT_X)
+        endX = startX + TETRIS_MAP_INIT_X - 20; 
+    }
+    else 
+    {
+        // JOGADOR 1 (Padrão): Desenha na ESQUERDA do tabuleiro
+        startX = 10 + m_renderOffset;
+        endX = TETRIS_MAP_INIT_X - 10 + m_renderOffset;
+    }
+
+    text->drawStart(startX, y, "SCORE", renderer);
+    text->drawEnd(endX, y, to_string(score), renderer);
 
     y += 2 * TETRIS_MAP_MARGIN;
-    text->drawStart(10, y, "LEVEL", renderer);
-    text->drawEnd(TETRIS_MAP_INIT_X - 10, y, to_string(level), renderer);
+    text->drawStart(startX, y, "LEVEL", renderer);
+    text->drawEnd(endX, y, to_string(level), renderer);
 
     y += 2 * TETRIS_MAP_MARGIN;
-    text->drawStart(10, y, "LINES", renderer);
-    text->drawEnd(TETRIS_MAP_INIT_X - 10, y, to_string(lines_cleared), renderer);
+    text->drawStart(startX, y, "LINES", renderer);
+    text->drawEnd(endX, y, to_string(lines_cleared), renderer);
 }
 
 void TetrisMap::updateGameStatus(int nbLinesCleared)
@@ -445,7 +473,7 @@ void TetrisMap::drawGhostMinos(SDL_Renderer *renderer)
         Pos posToPaint = posGhostTetrimino + posMino[i];
         Mino minoToPaint('G'); // G for ghost
 
-        int x = posToPaint.col() * TILE_SIZE + TETRIS_MAP_INIT_X;
+        int x = posToPaint.col() * TILE_SIZE + TETRIS_MAP_INIT_X + m_renderOffset;
         int y = posToPaint.row() * TILE_SIZE + TETRIS_MAP_INIT_Y;
 
         minoToPaint.draw(renderer, x, y);
@@ -454,14 +482,31 @@ void TetrisMap::drawGhostMinos(SDL_Renderer *renderer)
 
 void TetrisMap::drawTetriminoHold(SDL_Renderer *renderer)
 {
-    text->drawCenter(0, TETRIS_MAP_MARGIN, TETRIS_MAP_INIT_X, TETRIS_MAP_MARGIN, "HOLD", renderer);
+    int areaStart, areaEnd;
+
+    if (m_mirrorLayout)
+    {
+        // JOGADOR 2: Hold na DIREITA
+        areaStart = TETRIS_MAP_INIT_X + TETRIS_MAP_WIDTH + m_renderOffset;
+        areaEnd = areaStart + TETRIS_MAP_INIT_X; // Largura da sidebar
+    }
+    else
+    {
+        // JOGADOR 1: Hold na ESQUERDA
+        areaStart = m_renderOffset; 
+        areaEnd = TETRIS_MAP_INIT_X + m_renderOffset;
+    }
+
+    text->drawCenter(areaStart, TETRIS_MAP_MARGIN, areaEnd, TETRIS_MAP_MARGIN, "HOLD", renderer);
+
     if (tetriminoHold)
     {
-        int x = (TETRIS_MAP_INIT_X - (tetriminoHold->getSize() * TILE_SIZE)) / 2;
-
-        // Adjust vertical if is Tetrimino I
+        // Centraliza a peça na área calculada acima
+        int x = areaStart + (TETRIS_MAP_INIT_X - (tetriminoHold->getSize() * TILE_SIZE)) / 2;
+        
         int adjust_vertical = tetriminoHold->name() == 'I' ? 3 : 2;
         int y = (3.5 * TETRIS_MAP_MARGIN - (adjust_vertical * TILE_SIZE) / 2);
+        
         tetriminoHold->draw(renderer, x, y);
     }
 }
@@ -490,20 +535,38 @@ void TetrisMap::changeHold()
     }
 }
 
+void TetrisMap::setMirrorLayout(bool mirror) {
+    m_mirrorLayout = mirror;
+}
+
 void TetrisMap::drawQueueTetriminos(SDL_Renderer *renderer)
 {
-    text->drawCenter(
-        TETRIS_MAP_INIT_X + TETRIS_MAP_WIDTH,
-        TETRIS_MAP_MARGIN,
-        WINDOW_WIDTH,
-        TETRIS_MAP_MARGIN, "NEXT", renderer);
+    int areaStart, areaEnd;
+
+    if (m_mirrorLayout)
+    {
+        // JOGADOR 2: Next vai para a ESQUERDA (troca de lugar com o Score)
+        areaStart = m_renderOffset;
+        areaEnd = TETRIS_MAP_INIT_X + m_renderOffset;
+    }
+    else
+    {
+        // JOGADOR 1: Next fica na DIREITA
+        areaStart = TETRIS_MAP_INIT_X + TETRIS_MAP_WIDTH + m_renderOffset;
+        areaEnd = areaStart + TETRIS_MAP_INIT_X;
+    }
+
+    text->drawCenter(areaStart, TETRIS_MAP_MARGIN, areaEnd, TETRIS_MAP_MARGIN, "NEXT", renderer);
+
     for (int i = 0; i < 4; i++)
     {
         Tetrimino *t = tetriminoQueue[i];
-        int x = TETRIS_MAP_INIT_X + TETRIS_MAP_WIDTH + (TETRIS_MAP_INIT_X - (t->getSize() * TILE_SIZE)) / 2;
-        // Adjust vertical if is Tetrimino I
+        
+        int x = areaStart + (TETRIS_MAP_INIT_X - (t->getSize() * TILE_SIZE)) / 2;
+        
         int adjust_vertical = t->name() == 'I' ? 3 : 2;
         int y = 3.5 * TETRIS_MAP_MARGIN + TETRIMINO_QUEUE_MARGIN * i - (adjust_vertical * TILE_SIZE) / 2;
+        
         t->draw(renderer, x, y);
     }
 }
@@ -609,6 +672,7 @@ void TetrisMap::drawGameOver(SDL_Renderer *renderer)
 
 void TetrisMap::getGameStatus(int *score, int *linesCleared, int *level)
 {
+    
     *score = this->score;
     *level = this->level;
     *linesCleared = this->lines_cleared;
@@ -668,7 +732,7 @@ void TetrisMap::drawBufEnemyLines(SDL_Renderer *renderer)
 
     int height = bufferLines * TILE_SIZE;
     SDL_Rect rect;
-    rect.x = TETRIS_MAP_INIT_X + TETRIS_MAP_WIDTH + 10;
+    rect.x = TETRIS_MAP_INIT_X + TETRIS_MAP_WIDTH + 10 + m_renderOffset;
     rect.y = WINDOW_HEIGHT - height;
     rect.w = 10;
     rect.h = height;

@@ -11,6 +11,8 @@ using namespace std;
 class Results
 {
 public:
+
+    Results(std::string titleMessage, std::string subMessage);
     Results(int score, int linesCleared, bool win);
     void input();
     void render(int score, int linesCleared, bool win);
@@ -24,5 +26,6 @@ private:
 
     bool menuShowing;
 };
+
 
 #endif

@@ -55,10 +55,15 @@ public:
     int getBufferLines();
     void resetBufferLines();
 
+    void setRenderOffset(int offset);
+    void setMirrorLayout(bool mirror); // Setter
+
 private:
     // Matrix Height + 2 (Skyline) + 2 (Top wall) + 2 (Bottom wall)
     // Matrix Width + 2 (Left wall) + 2 (Right wall)
     // char can be: O, I, T, L, J, S, Z, W (for wall)
+
+    int m_renderOffset = 0;
     Mino m_matrix[MATRIX_HEIGHT + 2 + 2 + 2][MATRIX_WIDTH + 2 + 2];
 
     Tetrimino *tetrimino;
@@ -108,6 +113,8 @@ private:
     int lockDownTimer;
 
     bool gameOver = false;
+
+    bool m_mirrorLayout = false; // Variável para controlar inversão
 };
 
 #endif

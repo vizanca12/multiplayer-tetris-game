@@ -16,6 +16,7 @@
 #include "results.hpp"
 #include "tetrisAI.hpp"
 
+
 using namespace std;
 
 bool windowOpen;
@@ -420,12 +421,160 @@ void runTetrisVsAI()
     delete ai;
 }
 
+// Função de Input que controla DOIS jogadores
+void inputLocalMultiplayer(TetrisMap *p1, TetrisMap *p2)
+{
+    SDL_Event event;
+    while (SDL_PollEvent(&event))
+    {
+        if (event.type == SDL_QUIT)
+            windowOpen = false;
+        
+        if (event.key.state == SDL_PRESSED)
+        {
+            switch (event.key.keysym.sym)
+            {
+            // --- CONTROLES DO JOGADOR 1 (WASD + Space + C) ---
+            case SDLK_w:
+                p1->tetriminoAction(ROTATE_RIGHT);
+                break;
+            case SDLK_a:
+                p1->tetriminoAction(MOVE_LEFT);
+                break;
+            case SDLK_d:
+                p1->tetriminoAction(MOVE_RIGHT);
+                break;
+            case SDLK_s:
+                p1->tetriminoAction(MOVE_DOWN);
+                break;
+            case SDLK_SPACE:
+                p1->tetriminoAction(DROP);
+                break;
+            case SDLK_c:
+                p1->changeHold();
+                break;
+
+            // --- CONTROLES DO JOGADOR 2 (Setas + Enter + Shift) ---
+            case SDLK_UP:
+                p2->tetriminoAction(ROTATE_RIGHT);
+                break;
+            case SDLK_LEFT:
+                p2->tetriminoAction(MOVE_LEFT);
+                break;
+            case SDLK_RIGHT:
+                p2->tetriminoAction(MOVE_RIGHT);
+                break;
+            case SDLK_DOWN:
+                p2->tetriminoAction(MOVE_DOWN);
+                break;
+            case SDLK_RETURN: // Enter
+                p2->tetriminoAction(DROP);
+                break;
+            case SDLK_RSHIFT: // Shift Direito
+                p2->changeHold();
+                break;
+
+            case SDLK_ESCAPE:
+                windowOpen = false;
+                break;
+            }
+        }
+    }
+}
+
+void runTetrisLocalMultiplayer()
+{
+    // Cria dois mapas
+    TetrisMap *p1Map = new TetrisMap(false); // Player 1 (Esquerda)
+    TetrisMap *p2Map = new TetrisMap(false); // Player 2 (Direita)
+
+   int totalWidth = 1500;
+
+    // Configura o deslocamento visual do Player 2
+    // Usamos TETRIS_ENEMY_MAP_INIT_X (que já deve existir nos seus globals) ou calculamos um valor
+    // Supondo que TETRIS_ENEMY_MAP_INIT_X seja onde o mapa do inimigo fica no online
+    // Se não tiver essa const, use algo como 500 (pixels)
+    // Configurações dos mapas...
+    p1Map->setRenderOffset(0);
+    p1Map->setMirrorLayout(false);
+    p2Map->setRenderOffset(720); // Empurrei um pouco mais para a direita
+    p2Map->setMirrorLayout(true);// Ajuste esse valor 450 para afastar os tabuleiros
+
+    SDL_Renderer *renderer;
+    SDL_Window *window;
+
+    SDL_Init(SDL_INIT_EVERYTHING);
+    // Janela mais larga para caber os dois
+    SDL_CreateWindowAndRenderer(totalWidth, WINDOW_HEIGHT, 0, &window, &renderer);
+    SDL_SetWindowTitle(window, "Tetris - Local Multiplayer");
+    windowOpen = true;
+
+    string winnerName = "";
+
+    while (windowOpen)
+    {
+        // 1. Inputs para ambos
+        inputLocalMultiplayer(p1Map, p2Map);
+
+        // 2. Física / Ticks
+        p1Map->tick();
+        p2Map->tick();
+
+        // 3. Troca de Lixo (Garbage Lines)
+        // Se P1 fez linhas de ataque (buffer negativo), manda pro P2
+        int p1Attack = p1Map->getBufferLines();
+        if (p1Attack < 0) {
+            p2Map->addBufferLines(-p1Attack); // Adiciona linhas no P2
+            p1Map->resetBufferLines();
+        }
+
+        // Se P2 fez linhas de ataque
+        int p2Attack = p2Map->getBufferLines();
+        if (p2Attack < 0) {
+            p1Map->addBufferLines(-p2Attack); // Adiciona linhas no P1
+            p2Map->resetBufferLines();
+        }
+
+        // 4. Verificação de Vitória/Derrota
+        if (p1Map->isGameOver()) {
+            winnerName = "Player 2 Wins!";
+            windowOpen = false;
+        } else if (p2Map->isGameOver()) {
+            winnerName = "Player 1 Wins!";
+            windowOpen = false;
+        }
+
+        // 5. Renderização
+        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
+
+        p1Map->draw(renderer);
+        p2Map->draw(renderer);
+
+        SDL_RenderPresent(renderer);
+        
+        SDL_Delay(16); // ~60 FPS cap
+    }
+
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    
+    // Se não fechou pelo X da janela, mostra resultado
+    if (winnerName != "") {
+        Results results(winnerName, "Congratulations!");
+    }
+
+    delete p1Map;
+    delete p2Map;
+}
+
 int main(int argc, char *argv[])
 {
     srand((unsigned)time(NULL));
     const char *hostname = argv[1];
     int option = 0;
-    while (option != 3)
+    while (option != 4)
     {
         Menu menu;
 
@@ -468,6 +617,11 @@ int main(int argc, char *argv[])
         if (option == 2)
         {
             runTetrisVsAI();
+        }
+
+        if(option == 3)
+        {
+            runTetrisLocalMultiplayer();
         }
     }
 

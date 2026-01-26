@@ -1,7 +1,8 @@
 #include <menu.hpp>
 #include <globals.hpp>
 
-#define MAX_CHOICES 4
+// AUMENTADO PARA 5 OPÇÕES
+#define MAX_CHOICES 5
 
 Menu::Menu()
 {
@@ -54,6 +55,7 @@ void Menu::input()
             break;
             }
 
+            // Garante que o cursor rode entre 0 e 4
             choice = choice < 0 ? choice + MAX_CHOICES : choice % MAX_CHOICES;
         }
     }
@@ -68,25 +70,36 @@ void Menu::render()
 
     string welcomeText = "Welcome to";
     string tetris = "TETRIS";
+    
+    // Novas strings de menu
     string singleplayer = "1. Singleplayer";
-    string multiplayer = "2. Multiplayer";
-    string vsIA = "3. Vs IA";
-    string quit = "4. Quit";
+    string multiplayerOnline = "2. Multiplayer Online";
+    string multiplayerLocal = "3. vs Bot"; // Nova opção
+    string vsIA = "4. Local Multiplayer"; // Alterada para 4
+    string quit = "5. Quit";
+    
     string str_choice = ">";
     string madeWithLove = "Made by Vizanca e Edi";
 
     bg->render();
 
-    textSmall->drawCenter(0, 50, WINDOW_WIDTH_MENU, 50, welcomeText, renderer);
-    textBig->drawCenter(0, 100, WINDOW_WIDTH_MENU, 100, tetris, renderer);
+    // Título
+    textSmall->drawCenter(0, 40, WINDOW_WIDTH_MENU, 40, welcomeText, renderer);
+    textBig->drawCenter(0, 80, WINDOW_WIDTH_MENU, 80, tetris, renderer);
     
+    // Lógica do cursor:
+    // Começamos a desenhar as opções no Y = 240. 
+    // O cursor precisa acompanhar. O offset +225 alinha com a nova posição inicial.
+    textSmall->drawStart(50, choice * 50 + 225, str_choice, renderer);
 
-    textSmall->drawStart(50, choice * 50 + 285, str_choice, renderer);
-    textSmall->drawCenter(0, 300, WINDOW_WIDTH_MENU, 300, singleplayer, renderer);
-    textSmall->drawCenter(0, 350, WINDOW_WIDTH_MENU, 350, multiplayer, renderer);
-    textSmall->drawCenter(0, 400, WINDOW_WIDTH_MENU, 400, vsIA, renderer);
-    textSmall->drawCenter(0, 450, WINDOW_WIDTH_MENU, 450, quit, renderer);
+    // Desenhando as opções (Espaçamento de 50px entre elas)
+    textSmall->drawCenter(0, 240, WINDOW_WIDTH_MENU, 240, singleplayer, renderer);
+    textSmall->drawCenter(0, 290, WINDOW_WIDTH_MENU, 290, multiplayerOnline, renderer);
+    textSmall->drawCenter(0, 340, WINDOW_WIDTH_MENU, 340, multiplayerLocal, renderer);
+    textSmall->drawCenter(0, 390, WINDOW_WIDTH_MENU, 390, vsIA, renderer);
+    textSmall->drawCenter(0, 440, WINDOW_WIDTH_MENU, 440, quit, renderer);
 
+    // Rodapé
     textSmaller->drawCenter(0, 550, WINDOW_WIDTH_MENU, 550, madeWithLove, renderer);
 
     SDL_RenderPresent(renderer);
