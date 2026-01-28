@@ -366,16 +366,16 @@ void TetrisMap::updateGameStatus(int nbLinesCleared)
     switch (nbLinesCleared)
     {
     case 1:
-        score += 100 * level;
+        score += 40 * level;
         break;
     case 2:
-        score += 300 * level;
+        score += 100 * level;
         break;
     case 3:
-        score += 500 * level;
+        score += 300 * level;
         break;
     case 4:
-        score += 800 * level;
+        score += 1200 * level;
         break;
     default:
         break;
