@@ -15,183 +15,160 @@ Un jeu Tetris complet en C++ avec plusieurs modes de jeu : **Solo**, **Multijoue
 - Augmentation dynamique du niveau et de la vitesse
 - File d'attente affichant la pièce suivante
 - Fonction "hold" pour stocker une pièce
+# 🎮 Jeu Tetris Multijoueur
 
-### 🌐 Mode Multijoueur en Réseau
-- Jouez contre un autre joueur via TCP/IP
-- Synchronisation en temps réel via un serveur dédié
-- Système de "garbage lines" - envoyez des lignes incomplètes à votre adversaire
-- Interface côte à côte montrant votre plateau et celui de l'adversaire
-- Support pour plusieurs salles de jeu
+Un jeu Tetris complet en C++ avec plusieurs modes : **Solo**, **Versus IA**, **Multijoueur Local** et **Multijoueur Réseau**.
 
-<<<<<<< Updated upstream
-=======
-### 🎮 Mode Multijoueur Local
-- Deux joueurs sur la même machine via le même terminal
-- Interface côte à côte avec les deux plateaux
-- Système de "garbage lines" entre les joueurs
-- **Joueur 1** : Contrôles WASD
-- **Joueur 2** : Contrôles Flèches Directionnelles
+![Statut](https://img.shields.io/badge/Statut-Actif-brightgreen) ![Langage](https://img.shields.io/badge/Langage-C%2B%2B-blue) ![Plateforme](https://img.shields.io/badge/Plateforme-Linux%20%7C%20Windows-lightgrey)
 
->>>>>>> Stashed changes
-### 🤖 Mode Contre IA
-- IA compétitive avec analyse stratégique
-- Heuristiques avancées :
-  - Minimisation de la hauteur agrégée
-  - Maximisation des lignes complétées
-  - Détection des trous
-  - Calcul de la rugosité du plateau
-- Interface similaire au mode multijoueur
+## 📋 Présentation
 
-### 🎨 Caractéristiques Générales
-- Graphiques fluides avec SDL2
-- Rendu de texte personnalisable
-- Arrière-plan animé avec effets visuels
-- Menu intuitif de sélection du mode de jeu
-- Écran de résultats avec statistiques
+- 7 types de tétriminos : I, O, T, S, Z, J, L
+- Système de score par lignes (1/2/3/4 lignes)
+- File d'attente des pièces et fonction `hold`
+- Graphismes avec SDL2 et rendu texte via SDL2_ttf
+
+## Modes de jeu
+
+### 🎯 Solo
+- Jouez seul avec difficulté progressive.
+
+### 🤖 Versus IA
+- Affrontez l'IA qui évalue plusieurs positions et choisit le meilleur placement selon des heuristiques (hauteur agrégée, trous, rugosité, lignes complétées).
+
+### 🎮 Multijoueur Local
+- Deux joueurs sur la même machine (écran partagé). Les joueurs voient leurs deux plateaux côte à côte et peuvent envoyer des "garbage lines" à l'adversaire.
+- Contrôles : voir la section `Contrôles`.
+
+### 🌐 Multijoueur Réseau
+- Jouez contre un autre joueur via TCP/IP en vous connectant à un serveur dédié. Supporte plusieurs salles de jeu.
 
 ## 🛠️ Prérequis
 
 ### Linux (Ubuntu/Debian)
 ```bash
 sudo apt-get update
-sudo apt-get install libsdl2-dev libsdl2-ttf-dev
+sudo apt-get install libsdl2-dev libsdl2-ttf-dev build-essential
 ```
 
 ### Windows
-- [MinGW](https://www.mingw-w64.org/) ou compilateur C++ compatible
-- [SDL2](https://www.libsdl.org/)
-- [SDL2_ttf](https://www.libsdl.org/projects/SDL_ttf/)
+- MinGW-w64 ou MSVC
+- SDL2 et SDL2_ttf (installer et lier selon votre toolchain)
 
 ### Compilateur
-- GCC/G++ 7.0 ou supérieur
-- Support de C++11 ou ultérieur
+- GCC/G++ 7.0+ ou équivalent (support C++11+)
 
-## 📦 Installation et Compilation
+## 📦 Installation et compilation
 
-### 1. Clonez le dépôt
+1. Clonez le dépôt
 ```bash
 git clone https://github.com/vizanca12/multiplayer-tetris-game.git
 cd multiplayer-tetris-game
 ```
 
-### 2. Compilez le jeu
+2. Compilez le client
 ```bash
 make
 ```
 
-Cela compilera tous les fichiers source dans `src/` avec les bibliothèques SDL2.
-
-### 3. (Uniquement pour Multijoueur) Compilez le serveur
+3. (Optionnel) Compilez le serveur
 ```bash
-cd server
-make
+cd server && make
 ```
-<<<<<<< Updated upstream
 
-## 🚀 Comment Exécuter
+## 🚀 Exécution
 
-### Mode Solo ou contre IA
+### Mode Solo / Versus IA / Multijoueur Local
 ```bash
 ./main
 ```
-Le jeu ouvrira avec le menu principal. Utilisez les options de menu pour choisir entre :
-- Solo
-- Versus IA
-- Multijoueur
+Choisissez le mode depuis le menu principal.
 
-### Mode Multijoueur
+### Multijoueur Réseau
 
-**Terminal 1 - Démarrez le serveur :**
+1. Lancez le serveur (sur la machine hôte)
 ```bash
 cd server
 ./main
 ```
-Le serveur écoute sur le port **8080**
+Le serveur écoute sur le port **8080** par défaut.
 
-**Terminal 2 - Joueur 1 :**
+2. Lancez chaque client en ciblant l'adresse du serveur
 ```bash
-./main localhost
-```
-
-**Terminal 3 - Joueur 2 (même machine) :**
-```bash
-./main localhost
-```
-
-Pour jouer sur des machines différentes, utilisez l'adresse IP/hostname :
-```bash
-./main 192.168.1.100  # ou ./main hostname
+./main <server-ip>
+# ex: ./main localhost
 ```
 
 ## ⌨️ Contrôles
 
+### Mode Solo / Versus IA / Multijoueur Réseau (par défaut)
 | Action | Touche |
 |--------|--------|
-| Déplacer à Gauche | ← (Flèche Gauche) |
-| Déplacer à Droite | → (Flèche Droite) |
-| Rotation | Z ou X |
-| Hold (Stocker une Pièce) | C |
-| Chute Rapide | ↓ (Flèche Bas) |
-| Chute Forcée | Espace |
+| Déplacer à gauche | ← |
+| Déplacer à droite | → |
+| Rotation | Z / X |
+| Hold | C |
+| Chute rapide | ↓ |
+| Chute forcée | Espace |
 | Pause | P |
 | Menu | ESC |
 
-## 📁 Structure du Projet
+### Multijoueur Local
+**Joueur 1 (Gauche)**
+| Action | Touche |
+|--------|--------|
+| Gauche | A |
+| Droite | D |
+| Rotation | W |
+| Hold | C |
+| Chute rapide | S |
+| Chute forcée | Espace |
 
+**Joueur 2 (Droite)**
+| Action | Touche |
+|--------|--------|
+| Gauche | ← |
+| Droite | → |
+| Rotation | ↑ |
+| Hold | Shift droit |
+| Chute rapide | ↓ |
+| Chute forcée | Entrée |
+
+## 📁 Structure du projet
 ```
 multiplayer-tetris-game/
-├── src/              # Code source principal
-│   ├── main.cpp
-│   ├── tetrisMap.cpp      # Logique du plateau
-│   ├── tetrimino.cpp      # Pièces de Tetris
-│   ├── tetrisAI.cpp       # IA
-│   ├── client.cpp         # Client réseau
-│   ├── menu.cpp           # Menu du jeu
-│   └── ...
-├── include/          # Fichiers d'en-tête
-│   ├── tetrisMap.hpp
-│   ├── client.hpp
-│   └── ...
-├── server/           # Code du serveur
-│   ├── main.cpp
-│   ├── tetris_server.cpp
-│   ├── server.cpp
-│   ├── player.cpp
-│   ├── room.cpp
-│   └── Makefile
+├── src/              # Code source du client
+├── include/          # Headers
+├── server/           # Code et Makefile du serveur
 ├── docs/             # Documentation
-│   ├── documentation_fonctionalittes.md
-│   └── relation_avec_cours.md
-├── Makefile          # Build du client
+├── Makefile
 └── README.md
 ```
 
-## 🏗️ Architecture Technique
+## 🏗️ Architecture (résumé)
 
-### Composants Principaux
+- `TetrisMap` : logique du plateau 10×20
+- `Tetrimino` : définition des pièces et rotations
+- `TetrisAI` : moteur heuristique
+- `Client` / `Server` : communication réseau
 
-**Client :**
-- `TetrisMap`: Gère le plateau de 10x20 blocs
-- `Tetrimino`: Représente les pièces avec leurs 4 rotations
-- `TetrisAI`: Engine d'IA avec analyse heuristique
-- `Client`: Communication TCP/IP avec le serveur
-- `Menu/MenuRoom`: Interface utilisateur
+## 📚 Documentation
+- [Fonctionnalités détaillées](docs/documentation_fonctionalittes.md)
+- [Relation avec le cours](docs/relation_avec_cours.md)
 
-**Serveur :**
-- `Server`: Gestion des sockets TCP/IP sur le port 8080
-- `TetrisServer`: Logique de coordination du jeu
-- `Player`: Représentation de chaque joueur connecté
-- `Room`: Gestion des salles de jeu
+## ✍️ Auteurs
 
-### Protocole de Communication
+- Vinicius Zancheta
+- Edilberto
 
-Le jeu utilise TCP/IP pour la synchronisation entre clients et serveur :
-- `CODE_PLAYER_MAP`: Synchronise l'état du plateau
-- `CODE_PLAYER_LINES`: Envoie les garbage lines
-- `CODE_PLAYER_DEAD`: Notifie la défaite
-- `CODE_GAME_OVER`: Fin du jeu
+## 📄 Licence
 
-### Threading
+Projet à but éducatif.
+
+---
+
+**Dernière mise à jour** : Janvier 2026
+
 - Utilisation de `std::thread` pour la communication non-bloquante
 - `std::mutex` pour la synchronisation sécurisée des données
 - Thread séparé pour l'IA et le traitement du réseau
