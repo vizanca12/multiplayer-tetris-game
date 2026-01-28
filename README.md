@@ -164,10 +164,10 @@ multiplayer-tetris-game/
 
 | Lignes | Points |
 |--------|--------|
-| 1 | 100 |
-| 2 | 300 |
-| 3 | 500 |
-| 4 | 800 (Tetris) |
+| 1 | 40 |
+| 2 | 100 |
+| 3 | 300 |
+| 4 | 1200 (Tetris) |
 
 Le niveau augmente avec les points totaux. La vitesse de chute s'accélère progressivement.
 
