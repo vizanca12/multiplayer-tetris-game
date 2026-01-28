@@ -23,6 +23,16 @@ Un jeu Tetris complet en C++ avec plusieurs modes de jeu : **Solo**, **Multijoue
 - Interface côte à côte montrant votre plateau et celui de l'adversaire
 - Support pour plusieurs salles de jeu
 
+<<<<<<< Updated upstream
+=======
+### 🎮 Mode Multijoueur Local
+- Deux joueurs sur la même machine via le même terminal
+- Interface côte à côte avec les deux plateaux
+- Système de "garbage lines" entre les joueurs
+- **Joueur 1** : Contrôles WASD
+- **Joueur 2** : Contrôles Flèches Directionnelles
+
+>>>>>>> Stashed changes
 ### 🤖 Mode Contre IA
 - IA compétitive avec analyse stratégique
 - Heuristiques avancées :
@@ -76,6 +86,7 @@ Cela compilera tous les fichiers source dans `src/` avec les bibliothèques SDL2
 cd server
 make
 ```
+<<<<<<< Updated upstream
 
 ## 🚀 Comment Exécuter
 
@@ -268,3 +279,227 @@ Ce projet est développé à des fins éducationnelles.
 
 **Dernière mise à jour** : Janvier 2026
 
+=======
+
+## 🚀 Comment Exécuter
+
+### Mode Solo, contre IA ou Multijoueur Local
+```bash
+./main
+```
+Le jeu ouvrira avec le menu principal. Utilisez les options de menu pour choisir entre :
+- Solo
+- Versus IA
+- Multijoueur Local (2 joueurs sur la même machine)
+- Multijoueur Réseau
+
+### Mode Multijoueur Local
+```bash
+./main
+```
+Sélectionnez "Multijoueur Local" dans le menu. Deux joueurs peuvent jouer ensemble :
+- **Joueur 1** (Gauche) : WASD + Espace + C
+- **Joueur 2** (Droite) : Flèches + Entrée + Shift Droit
+
+### Mode Multijoueur Réseau
+
+**Terminal 1 - Démarrez le serveur :**
+```bash
+cd server
+./main
+```
+Le serveur écoute sur le port **8080**
+
+**Terminal 2 - Joueur 1 :**
+```bash
+./main localhost
+```
+
+**Terminal 3 - Joueur 2 (même machine) :**
+```bash
+./main localhost
+```
+
+Pour jouer sur des machines différentes, utilisez l'adresse IP/hostname :
+```bash
+./main 192.168.1.100  # ou ./main hostname
+```
+
+## ⌨️ Contrôles
+
+### Mode Solo / Versus IA
+| Action | Touche |
+|--------|--------|
+| Déplacer à Gauche | ← (Flèche Gauche) |
+| Déplacer à Droite | → (Flèche Droite) |
+| Rotation | Z ou X |
+| Hold (Stocker une Pièce) | C |
+| Chute Rapide | ↓ (Flèche Bas) |
+| Chute Forcée | Espace |
+| Pause | P |
+| Menu | ESC |
+
+### Mode Multijoueur Local
+**Joueur 1 (Gauche)**
+| Action | Touche |
+|--------|--------|
+| Déplacer à Gauche | A |
+| Déplacer à Droite | D |
+| Rotation | W |
+| Hold | C |
+| Chute Rapide | S |
+| Chute Forcée | Espace |
+
+**Joueur 2 (Droite)**
+| Action | Touche |
+|--------|--------|
+| Déplacer à Gauche | ← (Flèche Gauche) |
+| Déplacer à Droite | → (Flèche Droite) |
+| Rotation | ↑ (Flèche Haut) |
+| Hold | Shift Droit |
+| Chute Rapide | ↓ (Flèche Bas) |
+| Chute Forcée | Entrée |
+
+## 📁 Structure du Projet
+
+```
+multiplayer-tetris-game/
+├── src/              # Code source principal
+│   ├── main.cpp
+│   ├── tetrisMap.cpp      # Logique du plateau
+│   ├── tetrimino.cpp      # Pièces de Tetris
+│   ├── tetrisAI.cpp       # IA
+│   ├── client.cpp         # Client réseau
+│   ├── menu.cpp           # Menu du jeu
+│   └── ...
+├── include/          # Fichiers d'en-tête
+│   ├── tetrisMap.hpp
+│   ├── client.hpp
+│   └── ...
+├── server/           # Code du serveur
+│   ├── main.cpp
+│   ├── tetris_server.cpp
+│   ├── server.cpp
+│   ├── player.cpp
+│   ├── room.cpp
+│   └── Makefile
+├── docs/             # Documentation
+│   ├── documentation_fonctionalittes.md
+│   └── relation_avec_cours.md
+├── Makefile          # Build du client
+└── README.md
+```
+
+## 🏗️ Architecture Technique
+
+### Composants Principaux
+
+**Client :**
+- `TetrisMap`: Gère le plateau de 10x20 blocs
+- `Tetrimino`: Représente les pièces avec leurs 4 rotations
+- `TetrisAI`: Engine d'IA avec analyse heuristique
+- `Client`: Communication TCP/IP avec le serveur
+- `Menu/MenuRoom`: Interface utilisateur
+
+**Serveur :**
+- `Server`: Gestion des sockets TCP/IP sur le port 8080
+- `TetrisServer`: Logique de coordination du jeu
+- `Player`: Représentation de chaque joueur connecté
+- `Room`: Gestion des salles de jeu
+
+### Protocole de Communication
+
+Le jeu utilise TCP/IP pour la synchronisation entre clients et serveur :
+- `CODE_PLAYER_MAP`: Synchronise l'état du plateau
+- `CODE_PLAYER_LINES`: Envoie les garbage lines
+- `CODE_PLAYER_DEAD`: Notifie la défaite
+- `CODE_GAME_OVER`: Fin du jeu
+
+### Threading
+- Utilisation de `std::thread` pour la communication non-bloquante
+- `std::mutex` pour la synchronisation sécurisée des données
+- Thread séparé pour l'IA et le traitement du réseau
+
+## 📊 Détails Techniques
+
+### Graphiques et Rendu
+- **Bibliothèque**: SDL2 + SDL2_ttf
+- **Résolution**: 1280x720 pixels
+- **Polices**: Ubuntu, RobotoMono
+- **Arrière-plan**: Grille numérique animée
+
+### Système de Score
+- 1 ligne : 100 points
+- 2 lignes : 300 points
+- 3 lignes : 500 points
+- 4 lignes : 800 points (Tetris)
+- Le niveau augmente avec les points totaux
+- La vitesse de chute augmente avec le niveau
+
+### IA - Algorithme de Décision
+1. Détecte quand une nouvelle pièce apparaît
+2. Évalue 40 positions possibles (10 colonnes × 4 rotations)
+3. Simule le placement pour chaque configuration
+4. Calcule un score en utilisant les heuristiques :
+   - **Hauteur Agrégée**: Minimiser la hauteur totale
+   - **Trous**: Minimiser les espaces vides
+   - **Rugosité**: Minimiser la variation de hauteur
+   - **Lignes Complètes**: Maximiser les possibilités
+5. Exécute le meilleur mouvement trouvé
+
+## 🐛 Traitement des Erreurs
+
+- Validation des collisions avant chaque mouvement
+- Synchronisation des timeouts dans les connexions réseau
+- Détection de déconnexion avec reconnexion automatique
+- Libération sécurisée des ressources SDL2
+
+## 📝 Compilation Personnalisée
+
+### Client uniquement
+```bash
+make
+```
+
+### Serveur uniquement
+```bash
+cd server && make
+```
+
+### Nettoyer les fichiers compilés
+```bash
+make clean      # Client
+cd server && make clean  # Serveur
+```
+
+## 🎓 Objectif Éducatif
+
+Ce projet a été développé dans le cadre de la discipline **IN204** (Programmation Orientée Objet), démontrant :
+- Programmation en C++ moderne
+- Motifs de conception (Observer, State)
+- Programmation concurrente avec threads
+- Communication réseau (TCP/IP)
+- Programmation graphique avec SDL2
+- Intelligence artificielle avec algorithmes heuristiques
+- Architecture client-serveur
+
+## 📚 Documentation Additionnelle
+
+Consultez les fichiers de documentation pour plus de détails :
+- [Fonctionnalités Détaillées](docs/documentation_fonctionalittes.md)
+- [Relation avec le Cours](docs/relation_avec_cours.md)
+
+## ✍️ Auteurs
+
+Développé par :
+- **Vinicius Zancheta**
+- **Edilberto**
+
+## 📄 Licence
+
+Ce projet est développé à des fins éducationnelles.
+
+---
+
+**Dernière mise à jour** : Janvier 2026
+>>>>>>> Stashed changes

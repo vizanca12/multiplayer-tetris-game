@@ -15,18 +15,18 @@ class TetrisAI
 public:
     TetrisAI(TetrisMap *map);
 
-    // Calcula e executa o melhor movimento para a peça atual
+    // Calculate and execute the best move for the current piece
     void makeMove();
 
-    // Define a velocidade da IA (delay entre movimentos em ms)
+    // Define the AI speed (delay between moves in ms)
     void setSpeed(int delayMs);
 
 private:
     TetrisMap *tetrisMap;
-    int moveDelay = 50; // Delay entre movimentos em ms
+    int moveDelay = 50; // Delay between moves in ms
     int lastMoveTime = 0;
 
-    // Estrutura para armazenar uma posição avaliada
+    // Structure to store an evaluated position
     struct MoveEvaluation
     {
         int targetCol;
@@ -34,29 +34,29 @@ private:
         double score;
     };
 
-    // Avalia uma posição específica do tabuleiro
+    // Evaluate a specific board position
     double evaluatePosition(char board[MATRIX_HEIGHT][MATRIX_WIDTH]);
 
-    // Simula colocar uma peça em uma posição
+    // Simulate placing a piece at a position
     void simulatePlacement(char board[MATRIX_HEIGHT][MATRIX_WIDTH], 
                            Tetrimino *piece, int col, int rotation);
 
-    // Encontra a melhor jogada para a peça atual
+    // Find the best move for the current piece
     MoveEvaluation findBestMove();
 
     // Calcula a altura agregada do tabuleiro
     int getAggregateHeight(char board[MATRIX_HEIGHT][MATRIX_WIDTH]);
 
-    // Calcula o número de linhas completas
+    // Calculate the number of completed lines
     int getCompleteLines(char board[MATRIX_HEIGHT][MATRIX_WIDTH]);
 
-    // Calcula o número de buracos
+    // Calculate the number of holes
     int getHoles(char board[MATRIX_HEIGHT][MATRIX_WIDTH]);
 
-    // Calcula a irregularidade (diferença entre colunas adjacentes)
+    // Calculate roughness (difference between adjacent columns)
     int getBumpiness(char board[MATRIX_HEIGHT][MATRIX_WIDTH]);
 
-    // Obtém a altura de uma coluna específica
+    // Get the height of a specific column
     int getColumnHeight(char board[MATRIX_HEIGHT][MATRIX_WIDTH], int col);
 
     // Estado atual da IA

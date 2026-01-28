@@ -90,7 +90,7 @@ void Results::close()
 
 Results::Results(string titleMessage, string subMessage)
 {
-    // Inicialização padrão (copie do construtor original)
+    // Default initialization (copy from original constructor)
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_CreateWindowAndRenderer(WINDOW_WIDTH_MENU, WINDOW_HEIGHT_MENU, 0, &window, &renderer);
     SDL_SetWindowTitle(window, "Tetris Results");
@@ -105,10 +105,8 @@ Results::Results(string titleMessage, string subMessage)
 
     while (menuShowing)
     {
-        input(); // Usa o mesmo input
-        
-        // Render Customizado
-        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+        input();
+                SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
         SDL_SetRenderDrawColor(renderer, 15, 23, 42, 255);
         SDL_RenderClear(renderer);
         
