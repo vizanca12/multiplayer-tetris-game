@@ -168,7 +168,7 @@ void TetrisServer::handle(Player *player)
     room->remove(player);
     
     // Adicione esta pequena pausa antes de desconectar
-    // Isso dá tempo do "Game Over" chegar no cliente
+    // This gives time for "Game Over" to reach the client
     usleep(100000); // 100ms
     
     server->disconnect(player->get_socket());

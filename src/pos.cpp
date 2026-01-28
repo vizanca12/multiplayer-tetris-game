@@ -16,7 +16,7 @@ Pos::Pos()
 Pos::~Pos()
 {
     // std::cout << "pos "
-    //           << "(" << m_row << ", " << m_col << ") destruída" << std::endl;
+    //           << "(" << m_row << ", " << m_col << ") destroyed" << std::endl;
 }
 
 int &Pos::row()

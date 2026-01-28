@@ -114,7 +114,7 @@ private:
 
     bool gameOver = false;
 
-    bool m_mirrorLayout = false; // Variável para controlar inversão
+    bool m_mirrorLayout = false; // Variable to control mirroring
 };
 
 #endif

@@ -81,7 +81,7 @@ void handleClient(Client *client, TetrisMap *tetrisMap)
     bool multiplayerGameOver = false;
     int mapSize = MATRIX_WIDTH * MATRIX_HEIGHT;
 
-    // Loop principal enquanto o jogador está vivo
+    // Main loop while the player is alive
     while (!tetrisMap->isGameOver() && !multiplayerGameOver && windowOpen)
     {
         usleep(50000); // Sleep for 50ms
@@ -91,7 +91,7 @@ void handleClient(Client *client, TetrisMap *tetrisMap)
         char my_map[mapSize];
         tetrisMap->getMap(my_map);
         
-        // Verifica se conseguiu enviar. Se falhar, desconecta.
+        // Check if sending succeeded. If it fails, disconnect.
         if (client->send(&code, 1) <= 0) { multiplayerGameOver = true; break; }
         if (client->send(my_map, mapSize) <= 0) { multiplayerGameOver = true; break; }
 
@@ -106,8 +106,8 @@ void handleClient(Client *client, TetrisMap *tetrisMap)
             tetrisMap->resetBufferLines();
         }
 
-        // --- CORREÇÃO AQUI: Verificar se o servidor mandou algo ou fechou ---
-        // Se recv retornar <= 0, o servidor caiu/fechou. Tratamos como Fim de Jogo.
+        // --- FIX HERE: Check if the server sent something or closed ---
+        // If recv returns <= 0, the server crashed/closed. We treat it as Game Over.
         int bytes_read = client->recv(&code, 1);
         
         if (bytes_read <= 0) 
@@ -116,10 +116,10 @@ void handleClient(Client *client, TetrisMap *tetrisMap)
             break; 
         }
 
-        // Se leu com sucesso, processa o código
+        // If read successfully, process the code
         if (code == CODE_PLAYER_MAP)
         {
-            // Para lógica de 4 jogadores (Broadcast), adicione a leitura do ID aqui se tiver implementado
+            // For 4-player logic (Broadcast), add ID reading here if implemented
             // client->recv(&id, 1); 
             client->recv(tetrisMap->enemyMap(), mapSize);
         }
@@ -145,16 +145,16 @@ void handleClient(Client *client, TetrisMap *tetrisMap)
         cout << "You lost, keep trying!" << endl;
     }
 
-    // Loop de espectador (quando você morre mas o jogo continua)
+    // Spectator loop (when you die but the game continues)
     while (!multiplayerGameOver && windowOpen)
     {
         usleep(50000); // Sleep for 50ms
         char code = CODE_PLAYER_MAP;
         
-        // --- CORREÇÃO AQUI TAMBÉM ---
+        // --- FIX HERE TOO ---
         int res = client->recv(&code, 1);
         
-        if (res <= 0) // Servidor fechou a conexão
+        if (res <= 0) // Server closed the connection
         {
             multiplayerGameOver = true;
             break;
@@ -166,10 +166,10 @@ void handleClient(Client *client, TetrisMap *tetrisMap)
             multiplayerGameOver = true;
     }
 
-    // NÃO feche a janela aqui se quiser ver os resultados!
-    // windowOpen = false; <--- REMOVA ou COMENTE ESTA LINHA se ela existir no final
+    // DON'T close the window here if you want to see the results!
+    // windowOpen = false; <--- REMOVE or COMMENT THIS LINE if it exists at the end
     
-    // Apenas sinalize que o loop gráfico deve parar, mas deixe o main criar a tela de Results
+    // Just signal that the graphics loop should stop, but let main create the Results screen
     windowOpen = false; 
 }
 
@@ -260,14 +260,11 @@ void renderVsAI(TetrisMap *playerMap, TetrisMap *aiMap, SDL_Renderer *renderer)
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
     
-    // Draw player map
     playerMap->draw(renderer);
     
-    // Get AI map and set it as enemy map for display
     char aiMapData[MATRIX_WIDTH * MATRIX_HEIGHT];
     aiMap->getMap(aiMapData);
     
-    // Copy AI map to player's enemy map for rendering
     char *enemyMap = playerMap->enemyMap();
     for (int i = 0; i < MATRIX_WIDTH * MATRIX_HEIGHT; i++)
     {
@@ -421,7 +418,7 @@ void runTetrisVsAI()
     delete ai;
 }
 
-// Função de Input que controla DOIS jogadores
+// Input function that controls TWO players
 void inputLocalMultiplayer(TetrisMap *p1, TetrisMap *p2)
 {
     SDL_Event event;
@@ -434,7 +431,7 @@ void inputLocalMultiplayer(TetrisMap *p1, TetrisMap *p2)
         {
             switch (event.key.keysym.sym)
             {
-            // --- CONTROLES DO JOGADOR 1 (WASD + Space + C) ---
+            // --- PLAYER 1 CONTROLS (WASD + Space + C) ---
             case SDLK_w:
                 p1->tetriminoAction(ROTATE_RIGHT);
                 break;
@@ -454,7 +451,7 @@ void inputLocalMultiplayer(TetrisMap *p1, TetrisMap *p2)
                 p1->changeHold();
                 break;
 
-            // --- CONTROLES DO JOGADOR 2 (Setas + Enter + Shift) ---
+            // --- PLAYER 2 CONTROLS (Arrows + Enter + Shift) ---
             case SDLK_UP:
                 p2->tetriminoAction(ROTATE_RIGHT);
                 break;
@@ -484,21 +481,21 @@ void inputLocalMultiplayer(TetrisMap *p1, TetrisMap *p2)
 
 void runTetrisLocalMultiplayer()
 {
-    // Cria dois mapas
-    TetrisMap *p1Map = new TetrisMap(false); // Player 1 (Esquerda)
-    TetrisMap *p2Map = new TetrisMap(false); // Player 2 (Direita)
+    // Create two maps
+    TetrisMap *p1Map = new TetrisMap(false); // Player 1 (Left)
+    TetrisMap *p2Map = new TetrisMap(false); // Player 2 (Right)
 
    int totalWidth = 1500;
 
-    // Configura o deslocamento visual do Player 2
-    // Usamos TETRIS_ENEMY_MAP_INIT_X (que já deve existir nos seus globals) ou calculamos um valor
-    // Supondo que TETRIS_ENEMY_MAP_INIT_X seja onde o mapa do inimigo fica no online
-    // Se não tiver essa const, use algo como 500 (pixels)
-    // Configurações dos mapas...
+    // Configure the visual offset of Player 2
+    // We use TETRIS_ENEMY_MAP_INIT_X (which should already exist in your globals) or calculate a value
+    // Assuming TETRIS_ENEMY_MAP_INIT_X is where the enemy map is in online mode
+    // If you don't have this const, use something like 500 (pixels)
+    // Map configurations...
     p1Map->setRenderOffset(0);
     p1Map->setMirrorLayout(false);
-    p2Map->setRenderOffset(720); // Empurrei um pouco mais para a direita
-    p2Map->setMirrorLayout(true);// Ajuste esse valor 450 para afastar os tabuleiros
+    p2Map->setRenderOffset(720); // Pushed a bit more to the right
+    p2Map->setMirrorLayout(true);// Adjust this value 450 to separate the boards
 
     SDL_Renderer *renderer;
     SDL_Window *window;
@@ -513,29 +510,29 @@ void runTetrisLocalMultiplayer()
 
     while (windowOpen)
     {
-        // 1. Inputs para ambos
+        // 1. Inputs for both players
         inputLocalMultiplayer(p1Map, p2Map);
 
-        // 2. Física / Ticks
+        // 2. Physics / Ticks
         p1Map->tick();
         p2Map->tick();
 
-        // 3. Troca de Lixo (Garbage Lines)
-        // Se P1 fez linhas de ataque (buffer negativo), manda pro P2
+        // 3. Garbage Lines Exchange
+        // If P1 made attack lines (negative buffer), send to P2
         int p1Attack = p1Map->getBufferLines();
         if (p1Attack < 0) {
             p2Map->addBufferLines(-p1Attack); // Adiciona linhas no P2
             p1Map->resetBufferLines();
         }
 
-        // Se P2 fez linhas de ataque
+        // If P2 made attack lines
         int p2Attack = p2Map->getBufferLines();
         if (p2Attack < 0) {
-            p1Map->addBufferLines(-p2Attack); // Adiciona linhas no P1
+            p1Map->addBufferLines(-p2Attack); // Add lines to P1
             p2Map->resetBufferLines();
         }
 
-        // 4. Verificação de Vitória/Derrota
+        // 4. Win/Loss Check
         if (p1Map->isGameOver()) {
             winnerName = "Player 2 Wins!";
             windowOpen = false;
@@ -544,7 +541,7 @@ void runTetrisLocalMultiplayer()
             windowOpen = false;
         }
 
-        // 5. Renderização
+        // 5. Rendering
         SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
@@ -560,7 +557,7 @@ void runTetrisLocalMultiplayer()
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     
-    // Se não fechou pelo X da janela, mostra resultado
+    // If not closed by the window X, show result
     if (winnerName != "") {
         Results results(winnerName, "Congratulations!");
     }

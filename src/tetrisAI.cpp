@@ -66,11 +66,11 @@ TetrisAI::MoveEvaluation TetrisAI::findBestMove()
     best.targetCol = MATRIX_WIDTH / 2;
     best.targetRotation = 0;
 
-    // Obtém o estado atual do tabuleiro
+    // Get the current board state
     char currentMap[MATRIX_WIDTH * MATRIX_HEIGHT];
     tetrisMap->getMap(currentMap);
 
-    // Converte para matriz 2D para facilitar manipulação
+    // Convert to 2D matrix for easier manipulation
     char board[MATRIX_HEIGHT][MATRIX_WIDTH];
     for (int row = 0; row < MATRIX_HEIGHT; row++)
     {
@@ -80,7 +80,7 @@ TetrisAI::MoveEvaluation TetrisAI::findBestMove()
         }
     }
 
-    // Limpa as posições da peça atual do tabuleiro para simulação
+    // Clear the current piece positions from the board for simulation
     for (int row = 0; row < MATRIX_HEIGHT; row++)
     {
         for (int col = 0; col < MATRIX_WIDTH; col++)
@@ -88,19 +88,19 @@ TetrisAI::MoveEvaluation TetrisAI::findBestMove()
             char c = board[row][col];
             if (c != 0 && c != 'W')
             {
-                // Verifica se é parte da peça atual (nas primeiras linhas)
+                // Check if it is part of the current piece (in the first lines)
                 if (row < 4)
                     board[row][col] = 0;
             }
         }
     }
 
-    // Testa todas as rotações (0-3) e posições horizontais
+    // Test all rotations (0-3) and horizontal positions
     for (int rotation = 0; rotation < 4; rotation++)
     {
         for (int col = 0; col < MATRIX_WIDTH; col++)
         {
-            // Cria uma cópia do tabuleiro para simulação
+            // Create a copy of the board for simulation
             char testBoard[MATRIX_HEIGHT][MATRIX_WIDTH];
             for (int r = 0; r < MATRIX_HEIGHT; r++)
             {
@@ -110,16 +110,16 @@ TetrisAI::MoveEvaluation TetrisAI::findBestMove()
                 }
             }
 
-            // Simula a colocação da peça
-            // Para simplificar, usamos uma simulação básica
+            // Simulate the piece placement
+            // For simplicity, we use a basic simulation
             int dropRow = 0;
             bool canPlace = true;
 
-            // Encontra onde a peça cairia nesta coluna
+            // Find where the piece would fall in this column
             for (int row = 0; row < MATRIX_HEIGHT; row++)
             {
                 bool blocked = false;
-                // Verifica se há espaço (simplificado - assume peça 2x2)
+                // Check if there is space (simplified - assumes 2x2 piece)
                 for (int dc = 0; dc < 2 && col + dc < MATRIX_WIDTH; dc++)
                 {
                     if (testBoard[row][col + dc] != 0)
@@ -141,7 +141,7 @@ TetrisAI::MoveEvaluation TetrisAI::findBestMove()
 
             if (canPlace && col < MATRIX_WIDTH - 1)
             {
-                // Coloca a peça no tabuleiro de teste
+                // Place the piece on the test board
                 for (int dc = 0; dc < 2 && col + dc < MATRIX_WIDTH; dc++)
                 {
                     for (int dr = 0; dr < 2 && dropRow - dr >= 0; dr++)
@@ -150,7 +150,7 @@ TetrisAI::MoveEvaluation TetrisAI::findBestMove()
                     }
                 }
 
-                // Avalia a posição resultante
+                // Evaluate the resulting position
                 double score = evaluatePosition(testBoard);
 
                 if (score > best.score)

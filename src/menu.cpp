@@ -1,7 +1,7 @@
 #include <menu.hpp>
 #include <globals.hpp>
 
-// AUMENTADO PARA 5 OPÇÕES
+// INCREASED TO 5 OPTIONS
 #define MAX_CHOICES 5
 
 Menu::Menu()
@@ -75,7 +75,7 @@ void Menu::render()
     // Novas strings de menu
     string singleplayer = "1. Singleplayer";
     string multiplayerOnline = "2. Multiplayer Online";
-    string multiplayerLocal = "3. vs Bot"; // Nova opção
+    string multiplayerLocal = "3. vs Bot";
     string vsIA = "4. Local Multiplayer"; // Alterada para 4
     string quit = "5. Quit";
     
@@ -84,23 +84,23 @@ void Menu::render()
 
     bg->render();
 
-    // Título
+    // Title
     textSmall->drawCenter(0, 40, WINDOW_WIDTH_MENU, 40, welcomeText, renderer);
     textBig->drawCenter(0, 80, WINDOW_WIDTH_MENU, 80, tetris, renderer);
     
-    // Lógica do cursor:
-    // Começamos a desenhar as opções no Y = 240. 
-    // O cursor precisa acompanhar. O offset +225 alinha com a nova posição inicial.
+    // Cursor logic:
+    // We start drawing the options at Y = 240.
+    // The cursor needs to follow. The offset +225 aligns with the new starting position.
     textSmall->drawStart(50, choice * 50 + 225, str_choice, renderer);
 
-    // Desenhando as opções (Espaçamento de 50px entre elas)
+    // Drawing the options (50px spacing between them)
     textSmall->drawCenter(0, 240, WINDOW_WIDTH_MENU, 240, singleplayer, renderer);
     textSmall->drawCenter(0, 290, WINDOW_WIDTH_MENU, 290, multiplayerOnline, renderer);
     textSmall->drawCenter(0, 340, WINDOW_WIDTH_MENU, 340, multiplayerLocal, renderer);
     textSmall->drawCenter(0, 390, WINDOW_WIDTH_MENU, 390, vsIA, renderer);
     textSmall->drawCenter(0, 440, WINDOW_WIDTH_MENU, 440, quit, renderer);
 
-    // Rodapé
+    // Footer
     textSmaller->drawCenter(0, 550, WINDOW_WIDTH_MENU, 550, madeWithLove, renderer);
 
     SDL_RenderPresent(renderer);
