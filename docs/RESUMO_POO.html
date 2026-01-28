@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumo de Orientação a Objeto - Multiplayer Tetris Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .toc {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 30px 0;
+        }
+        
+        .toc h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .toc ul {
+            list-style: none;
+            columns: 2;
+        }
+        
+        .toc li {
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .toc li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .section {
+            margin: 40px 0;
+            page-break-inside: avoid;
+        }
+        
+        .section h2 {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        
+        .section h3 {
+            color: #764ba2;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        
+        .classe-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .classe-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .classe-header h4 {
+            color: #667eea;
+            font-size: 1.1em;
+        }
+        
+        .arquivo-tag {
+            background: #667eea;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        
+        .subsecao {
+            margin: 15px 0 10px 20px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .subsecao-conteudo {
+            margin: 10px 0 10px 40px;
+            font-size: 0.95em;
+        }
+        
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #d63384;
+        }
+        
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+            line-height: 1.4;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        table thead {
+            background: #667eea;
+            color: white;
+        }
+        
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .diagrama {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #764ba2;
+            overflow-x: auto;
+        }
+        
+        .diagrama pre {
+            background: none;
+            color: #333;
+            font-size: 0.85em;
+        }
+        
+        .beneficios, .conclusao {
+            background: #e7f3ff;
+            border-left: 4px solid #0066cc;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .beneficios h4, .conclusao h4 {
+            color: #0066cc;
+            margin-bottom: 10px;
+        }
+        
+        .beneficios ul, .conclusao ul {
+            margin-left: 20px;
+        }
+        
+        .beneficios li, .conclusao li {
+            margin: 8px 0;
+        }
+        
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #ddd;
+        }
+        
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+            }
+            .section {
+                page-break-inside: avoid;
+            }
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .toc ul {
+                columns: 1;
+            }
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📚 Orientação a Objeto</h1>
+            <p>Multiplayer Tetris Game - Guia Completo de Conceitos POO</p>
+        </div>
+        
+        <!-- Content -->
+        <div class="content">
+            <!-- Table of Contents -->
+            <div class="toc">
+                <h2>📋 Índice</h2>
+                <ul>
+                    <li><a href="#classes">Classes</a></li>
+                    <li><a href="#structs">Structs e Enums</a></li>
+                    <li><a href="#heranca">Herança</a></li>
+                    <li><a href="#polimorfismo">Polimorfismo</a></li>
+                    <li><a href="#ponteiros">Ponteiros</a></li>
+                    <li><a href="#conceitos">Conceitos POO</a></li>
+                    <li><a href="#resumo">Tabela de Resumo</a></li>
+                </ul>
+            </div>
+            
+            <!-- CLASSES SECTION -->
+            <div id="classes" class="section">
+                <h2>🏗️ Classes</h2>
+                
+                <div class="classe-box">
+                    <div class="classe-header">
+                        <h4>1. Color</h4>
+                        <span class="arquivo-tag">color.hpp</span>
+                    </div>
+                    <div class="subsecao">Propósito:</div>
+                    <div class="subsecao-conteudo">Gerenciar cores em formato RGBA (Red, Green, Blue, Alpha)</div>
+                    
+                    <div class="subsecao">Atributos Privados:</div>
+                    <div class="subsecao-conteudo">
+                        <code>uint8_t m_red, m_green, m_blue, m_alpha</code>
+                    </div>
+                    
+                    <div class="subsecao">Métodos Principais:</div>
+                    <div class="subsecao-conteudo">
+                        • Construtores: <code>Color(R,G,B,A)</code>, <code>Color(hex)</code>, <code>Color()</code><br>
+                        • Getters: <code>getRed()</code>, <code>getGreen()</code>, <code>getBlue()</code>, <code>getAlpha()</code><br>
+                        • Modificadores: <code>setAlpha()</code>, <code>set()</code><br>
+                        • Estático: <code>fromTetrimino(char c)</code>
+                    </div>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="classe-header">
+                        <h4>2. Pos</h4>
+                        <span class="arquivo-tag">pos.hpp</span>
+                    </div>
+                    <div class="subsecao">Propósito:</div>
+                    <div class="subsecao-conteudo">Representar posições no mapa usando coordenadas (linha, coluna)</div>
+                    
+                    <div class="subsecao">Atributos Privados:</div>
+                    <div class="subsecao-conteudo"><code>int m_row, m_col</code></div>
+                    
+                    <div class="subsecao">Operadores Sobrecarregados:</div>
+                    <div class="subsecao-conteudo">
+                        • <code>operator+</code> - Soma posições<br>
+                        • <code>operator-</code> - Subtrai posições<br>
+                        • <code>operator+=</code> - Soma acumulativa<br>
+                        • <code>operator-=</code> - Subtração acumulativa
+                    </div>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="classe-header">
+                        <h4>3. Mino</h4>
+                        <span class="arquivo-tag">mino.hpp</span>
+                    </div>
+                    <div class="subsecao">Propósito:</div>
+                    <div class="subsecao-conteudo">Representar um único bloco (mini-tetrimino) com cor e valor</div>
+                    
+                    <div class="subsecao">Atributos Privados:</div>
+                    <div class="subsecao-conteudo">
+                        • <code>Color m_color</code> - Cor do bloco<br>
+                        • <code>char m_value</code> - Tipo de peça<br>
+                        • <code>float animationProgress</code> - Progresso da animação
+                    </div>
+                    
+                    <div class="subsecao">Métodos Públicos:</div>
+                    <div class="subsecao-conteudo">
+                        • <code>color()</code> - Getter de cor<br>
+                        • <code>value()</code> - Getter de valor<br>
+                        • <code>draw()</code> - Desenha o bloco<br>
+                        • <code>incrementAnimationProgress()</code> - Avança animação<br>
+                        • <code>animationEnded()</code> - Verifica fim
+                    </div>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="classe-header">
+                        <h4>4. Tetrimino (Classe Base Abstrata)</h4>
+                        <span class="arquivo-tag">tetrimino.hpp</span>
+                    </div>
+                    <div class="subsecao">Propósito:</div>
+                    <div class="subsecao-conteudo">Define o comportamento de todas as peças de Tetris</div>
+                    
+                    <div class="subsecao">Atributos Protegidos:</div>
+                    <div class="subsecao-conteudo">
+                        • <code>char t_name</code><br>
+                        • <code>Pos m_pos, prev_pos</code><br>
+                        • <code>Orientation m_orientation</code><br>
+                        • <code>Color m_color</code><br>
+                        • <code>bool dead</code>
+                    </div>
+                    
+                    <div class="subsecao">Métodos Virtuais Puros (POLIMORFISMO):</div>
+                    <div class="subsecao-conteudo">
+                        • <code>virtual array&lt;Pos, 4&gt; getMinos() = 0</code><br>
+                        • <code>virtual int getSize() = 0</code><br>
+                        • <code>virtual map&lt;Orientation, map&lt;int, Pos&gt;&gt; getRotationMap() = 0</code>
+                    </div>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="classe-header">
+                        <h4>5. Tetrimino Derivadas (I, J, L, O, S, T, Z)</h4>
+                        <span class="arquivo-tag">tetrimino.hpp</span>
+                    </div>
+                    <div class="subsecao">Propósito:</div>
+                    <div class="subsecao-conteudo">Implementar cada tipo de peça de Tetris com geometria única</div>
+                    
+                    <div class="subsecao">Exemplo - TetriminoI:</div>
+                    <pre><code>class TetriminoI : public Tetrimino {
+public:
+    TetriminoI();
+    virtual array&lt;Pos, 4&gt; getMinos();
+    virtual map&lt;Orientation, map&lt;int, Pos&gt;&gt; getRotationMap();
+    virtual int getSize();
+};</code></pre>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="classe-header">
+                        <h4>6. TetrisMap</h4>
+                        <span class="arquivo-tag">tetrisMap.hpp</span>
+                    </div>
+                    <div class="subsecao">Propósito:</div>
+                    <div class="subsecao-conteudo">Gerenciar mapa/tabuleiro de Tetris e toda a lógica do jogo</div>
+                    
+                    <div class="subsecao">Responsabilidades:</div>
+                    <div class="subsecao-conteudo">
+                        ✓ Renderizar mapa<br>
+                        ✓ Gerenciar peça atual<br>
+                        ✓ Fila de próximas peças<br>
+                        ✓ Sistema de hold<br>
+                        ✓ Detecção de colisão<br>
+                        ✓ Eliminação de linhas<br>
+                        ✓ Estatísticas (score, level, lines)
+                    </div>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="classe-header">
+                        <h4>7. Text</h4>
+                        <span class="arquivo-tag">text.hpp</span>
+                    </div>
+                    <div class="subsecao">Propósito:</div>
+                    <div class="subsecao-conteudo">Renderizar texto na tela usando SDL_ttf</div>
+                    
+                    <div class="subsecao">Métodos Públicos:</div>
+                    <div class="subsecao-conteudo">
+                        • <code>drawStart()</code> - Alinhado à esquerda<br>
+                        • <code>drawCenter()</code> - Centralizado<br>
+                        • <code>drawEnd()</code> - Alinhado à direita
+                    </div>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="classe-header">
+                        <h4>8. Background</h4>
+                        <span class="arquivo-tag">background.hpp</span>
+                    </div>
+                    <div class="subsecao">Propósito:</div>
+                    <div class="subsecao-conteudo">Renderizar tetriminos animados no fundo da tela</div>
+                    
+                    <div class="subsecao">Destaque:</div>
+                    <div class="subsecao-conteudo">
+                        Usa <span class="highlight">std::unique_ptr&lt;Tetrimino&gt;</span> - <strong>Ponteiros inteligentes</strong> para gerenciamento automático de memória
+                    </div>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="classe-header">
+                        <h4>9. Menu</h4>
+                        <span class="arquivo-tag">menu.hpp</span>
+                    </div>
+                    <div class="subsecao">Propósito:</div>
+                    <div class="subsecao-conteudo">Gerenciar menu principal do jogo</div>
+                    
+                    <div class="subsecao">Atributos (Ponteiros Inteligentes):</div>
+                    <div class="subsecao-conteudo">
+                        • <code>std::unique_ptr&lt;Background&gt; bg</code><br>
+                        • <code>std::unique_ptr&lt;Text&gt; textSmall, textSmaller, textBig</code>
+                    </div>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="classe-header">
+                        <h4>10. TetrisAI</h4>
+                        <span class="arquivo-tag">tetrisAI.hpp</span>
+                    </div>
+                    <div class="subsecao">Propósito:</div>
+                    <div class="subsecao-conteudo">IA que joga Tetris automaticamente</div>
+                    
+                    <div class="subsecao">Algoritmo:</div>
+                    <div class="subsecao-conteudo">
+                        • Avalia todas as posições possíveis<br>
+                        • Calcula altura agregada<br>
+                        • Conta linhas completas<br>
+                        • Detecta furos<br>
+                        • Calcula rugosidade<br>
+                        • Executa melhor movimento
+                    </div>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="classe-header">
+                        <h4>11. Client</h4>
+                        <span class="arquivo-tag">client.hpp</span>
+                    </div>
+                    <div class="subsecao">Propósito:</div>
+                    <div class="subsecao-conteudo">Comunicação cliente-servidor via socket</div>
+                    
+                    <div class="subsecao">Funcionalidades:</div>
+                    <div class="subsecao-conteudo">
+                        • Conectar ao servidor<br>
+                        • Enviar/receber mensagens<br>
+                        • Verificar status de conexão<br>
+                        • Desconectar
+                    </div>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="classe-header">
+                        <h4>12. Player (Servidor)</h4>
+                        <span class="arquivo-tag">server/player.hpp</span>
+                    </div>
+                    <div class="subsecao">Propósito:</div>
+                    <div class="subsecao-conteudo">Representar um jogador no servidor</div>
+                    
+                    <div class="subsecao">Atributos:</div>
+                    <div class="subsecao-conteudo">
+                        • <code>int socket</code> - Conexão<br>
+                        • <code>int id</code> - ID único<br>
+                        • <code>bool alive</code> - Status<br>
+                        • <code>int i_watching, i_watched_by</code> - Relação entre jogadores
+                    </div>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="classe-header">
+                        <h4>13. Room (Servidor)</h4>
+                        <span class="arquivo-tag">server/room.hpp</span>
+                    </div>
+                    <div class="subsecao">Propósito:</div>
+                    <div class="subsecao-conteudo">Gerenciar sala de jogo com múltiplos jogadores</div>
+                    
+                    <div class="subsecao">Funcionalidades:</div>
+                    <div class="subsecao-conteudo">
+                        • Adicionar/remover jogadores<br>
+                        • Verificar se está cheia/vazia<br>
+                        • Obter informações da sala
+                    </div>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="classe-header">
+                        <h4>14. Server</h4>
+                        <span class="arquivo-tag">server/server.hpp</span>
+                    </div>
+                    <div class="subsecao">Propósito:</div>
+                    <div class="subsecao-conteudo">Implementação do servidor de rede</div>
+                    
+                    <div class="subsecao">Funcionalidades:</div>
+                    <div class="subsecao-conteudo">
+                        • Aguardar clientes<br>
+                        • Enviar/receber dados<br>
+                        • Gerenciar conexões<br>
+                        • Verificar status
+                    </div>
+                </div>
+            </div>
+            
+            <!-- STRUCTS & ENUMS SECTION -->
+            <div id="structs" class="section">
+                <h2>📦 Structs e Enums</h2>
+                
+                <div class="classe-box">
+                    <div class="classe-header">
+                        <h4>Enum: Orientation</h4>
+                        <span class="arquivo-tag">tetrimino.hpp</span>
+                    </div>
+                    <pre><code>enum Orientation {
+    N, // 0 - Norte
+    W, // 1 - Oeste  
+    S, // 2 - Sul
+    E  // 3 - Leste
+};</code></pre>
+                    <div class="subsecao">Propósito:</div>
+                    <div class="subsecao-conteudo">Define as 4 orientações possíveis de uma peça de Tetris</div>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="classe-header">
+                        <h4>Enum: TetriminoAction</h4>
+                        <span class="arquivo-tag">tetrimino.hpp</span>
+                    </div>
+                    <pre><code>enum TetriminoAction {
+    MOVE_LEFT,
+    MOVE_RIGHT,
+    MOVE_DOWN,
+    MOVE_UP,
+    ROTATE_LEFT,
+    ROTATE_RIGHT,
+    DROP,
+};</code></pre>
+                    <div class="subsecao">Propósito:</div>
+                    <div class="subsecao-conteudo">Define todas as ações possíveis de uma peça</div>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="classe-header">
+                        <h4>Enum: TetrisPhase</h4>
+                        <span class="arquivo-tag">tetrisMap.hpp</span>
+                    </div>
+                    <pre><code>enum TetrisPhase {
+    GENERATION_PHASE,    // Gera nova peça
+    FALLING_PHASE,       // Peça caindo
+    LOCK_PHASE,          // Fixa peça
+    PATTERN_PHASE,       // Detecta padrões
+    ANIMATION_PHASE,     // Anima eliminação
+    ELIMINATE_PHASE,     // Remove linhas
+};</code></pre>
+                    <div class="subsecao">Propósito:</div>
+                    <div class="subsecao-conteudo">Define as fases do jogo em ciclo</div>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="classe-header">
+                        <h4>Struct: MoveEvaluation</h4>
+                        <span class="arquivo-tag">tetrisAI.hpp (aninhado)</span>
+                    </div>
+                    <pre><code>struct MoveEvaluation {
+    int targetCol;       // Coluna alvo
+    int targetRotation;  // Rotação alvo
+    double score;        // Score da posição
+};</code></pre>
+                    <div class="subsecao">Propósito:</div>
+                    <div class="subsecao-conteudo">Armazenar avaliação de movimentos da IA</div>
+                </div>
+            </div>
+            
+            <!-- HERANÇA SECTION -->
+            <div id="heranca" class="section">
+                <h2>🔗 Herança</h2>
+                
+                <div class="classe-box">
+                    <div class="subsecao">Estrutura de Herança:</div>
+                    <div class="diagrama">
+                        <pre>┌─────────────────────────┐
+│     <<abstract>>        │
+│      Tetrimino          │
+│─────────────────────────│
+│ # t_name                │
+│ # m_pos                 │
+│ # m_orientation         │
+│ # m_color               │
+│─────────────────────────│
+│ + moveAction()          │
+│ + rotateAction()        │
+│ # getMinos() = 0        │
+│ # getSize() = 0         │
+└─────────────────────────┘
+         △ △ △ △ △ △ △
+         │ │ │ │ │ │ │
+    ┌────┘ │ │ │ │ │ └────┐
+    │      └─┼─┼─┼─┘       │
+    │        │ │ │         │
+┌───┴──┐ ┌──┴┴─┴──┐    ┌───┴──┐
+│  I   │ │ J T O  │    │ L Z S│
+│      │ │        │    │      │
+└──────┘ └────────┘    └──────┘</pre>
+                    </div>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="subsecao">Características da Herança:</div>
+                    <div class="subsecao-conteudo">
+                        <strong>Classe Base (Tetrimino):</strong><br>
+                        ✓ Define interface comum<br>
+                        ✓ Implementa lógica compartilhada<br>
+                        ✓ Contém métodos virtuais puros para polimorfismo<br><br>
+                        
+                        <strong>Classes Derivadas:</strong><br>
+                        ✓ Herdam comportamento de movimento e rotação<br>
+                        ✓ Implementam seus próprios getMinos(), getRotationMap(), getSize()<br>
+                        ✓ Cada tipo de peça tem geometria diferente
+                    </div>
+                </div>
+                
+                <div class="beneficios">
+                    <h4>✅ Benefícios da Herança no Projeto</h4>
+                    <ul>
+                        <li><strong>Reutilização de Código:</strong> Lógica comum em classe base</li>
+                        <li><strong>Facilidade de Manutenção:</strong> Alterações centralizadas</li>
+                        <li><strong>Extensibilidade:</strong> Fácil adicionar novos tipos de peças</li>
+                        <li><strong>Polimorfismo:</strong> Tratam todas as peças uniformemente</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- POLIMORFISMO SECTION -->
+            <div id="polimorfismo" class="section">
+                <h2>🎭 Polimorfismo</h2>
+                
+                <h3>1️⃣ Polimorfismo em Tempo de Compilação (Sobrecarga)</h3>
+                
+                <div class="classe-box">
+                    <div class="subsecao">Operadores Sobrecarregados (Classe Pos):</div>
+                    <pre><code>// Mesma operação com diferentes significados
+Pos &operator+(Pos &anotherPos);   // Soma de posições
+Pos &operator-(Pos &anotherPos);   // Subtração de posições
+Pos &operator+=(Pos &anotherPos);  // Soma acumulativa
+Pos &operator-=(Pos &anotherPos);  // Subtração acumulativa</code></pre>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="subsecao">Métodos Sobrecarregados:</div>
+                    <pre><code>// Classe Color - 3 construtores diferentes
+Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);  // RGB
+Color(uint32_t hex);                                 // Hexadecimal
+Color();                                             // Padrão
+
+// Classe Mino - draw sobrecarregado
+void draw(SDL_Renderer *renderer, int x, int y);
+void draw(SDL_Renderer *renderer);
+
+// Classe Results - construtores diferentes
+Results(std::string titleMessage, std::string subMessage);
+Results(int score, int linesCleared, bool win);</code></pre>
+                </div>
+                
+                <h3>2️⃣ Polimorfismo em Tempo de Execução (Funções Virtuais)</h3>
+                
+                <div class="classe-box">
+                    <div class="subsecao">Métodos Virtuais Puros (Classe Tetrimino):</div>
+                    <pre><code>class Tetrimino {
+public:
+    virtual ~Tetrimino() = default;  // Destrutor virtual
+    
+    // Métodos virtuais puros (DEVEM ser implementados)
+    virtual array&lt;Pos, 4&gt; getMinos() = 0;
+    virtual int getSize() = 0;
+    virtual map&lt;Orientation, map&lt;int, Pos&gt;&gt; getRotationMap() = 0;
+};</code></pre>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="subsecao">Implementação em Subclasses:</div>
+                    <pre><code>class TetriminoI : public Tetrimino {
+public:
+    virtual array&lt;Pos, 4&gt; getMinos() override;
+    virtual int getSize() override;
+    virtual map&lt;Orientation, map&lt;int, Pos&gt;&gt; getRotationMap() override;
+};
+
+class TetriminoJ : public Tetrimino {
+public:
+    virtual array&lt;Pos, 4&gt; getMinos() override;
+    // ... etc
+};</code></pre>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="subsecao">Factory Method (Polimorfismo em Ação):</div>
+                    <pre><code>// Factory retorna ponteiro para classe base
+// mas aponta para qualquer subclasse
+Tetrimino *generateTetriminoFrom(char c);
+
+// Uso:
+Tetrimino *tetrimino = Tetrimino::generateTetriminoFrom('I');
+array&lt;Pos, 4&gt; minos = tetrimino->getMinos();  // Versão de TetriminoI</code></pre>
+                </div>
+                
+                <div class="beneficios">
+                    <h4>✅ Benefícios do Polimorfismo</h4>
+                    <ul>
+                        <li><strong>Flexibilidade:</strong> Código genérico funciona com qualquer tipo</li>
+                        <li><strong>Extensibilidade:</strong> Adicionar novo tipo sem alterar código existente</li>
+                        <li><strong>Manutenibilidade:</strong> Mudanças centralizadas</li>
+                        <li><strong>Reutilização:</strong> Evita duplicação de código</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- PONTEIROS SECTION -->
+            <div id="ponteiros" class="section">
+                <h2>🔍 Ponteiros</h2>
+                
+                <h3>1️⃣ Ponteiros Brutos (Raw Pointers)</h3>
+                
+                <div class="classe-box">
+                    <div class="subsecao">Em Estruturas SDL (Gerenciadas pela Biblioteca):</div>
+                    <pre><code>class Menu {
+private:
+    SDL_Renderer *renderer;  // Gerenciado por SDL
+    SDL_Window *window;      // Gerenciado por SDL
+};
+
+class Client {
+private:
+    int m_socket;  // Socket gerenciado pelo sistema
+};</code></pre>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="subsecao">Em Dados de Jogo:</div>
+                    <pre><code>class TetrisMap {
+private:
+    Tetrimino *tetrimino;                    // Peça atual
+    vector&lt;Tetrimino *&gt; tetriminoQueue;      // Fila de peças
+    Tetrimino *tetriminoHold = nullptr;      // Peça guardada
+};
+
+class Room {
+private:
+    vector&lt;Player *&gt; players;  // Vetor de ponteiros
+};</code></pre>
+                </div>
+                
+                <h3>2️⃣ Ponteiros Inteligentes (Smart Pointers)</h3>
+                
+                <div class="classe-box">
+                    <div class="subsecao">unique_ptr - Posse Exclusiva:</div>
+                    <pre><code>class Menu {
+private:
+    // Cada ponteiro inteligente gerencia um objeto único
+    std::unique_ptr&lt;Background&gt; bg;
+    std::unique_ptr&lt;Text&gt; textSmall;
+    std::unique_ptr&lt;Text&gt; textSmaller;
+    std::unique_ptr&lt;Text&gt; textBig;
+};
+
+// Benefício: Automática destruição quando Menu é destruído
+// Não precisa chamar delete manualmente</code></pre>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="subsecao">vector&lt;unique_ptr&gt; - Coleções Gerenciadas:</div>
+                    <pre><code>class Background {
+private:
+    // Vetor de ponteiros inteligentes
+    std::vector&lt;std::unique_ptr&lt;Tetrimino&gt;&gt; tetriminosBg;
+};
+
+// Cada Tetrimino criado é automaticamente destruído
+// quando sair do escopo do vetor</code></pre>
+                </div>
+                
+                <h3>3️⃣ Referências vs Ponteiros</h3>
+                
+                <div class="classe-box">
+                    <div class="subsecao">Referências (Retorno de Métodos):</div>
+                    <pre><code>// Retorna referência (não cópia)
+int &Pos::row();  // Retorna referência a int
+Pos &Pos::operator+(Pos &anotherPos);  // Retorna ref a Pos
+
+// Benefício: Eficiência, não cria cópia</code></pre>
+                </div>
+                
+                <h3>4️⃣ Gerenciamento de Memória</h3>
+                
+                <div class="classe-box">
+                    <pre><code>// Alocação
+TetrisMap *map = new TetrisMap(false);
+Player *p = new Player(socket);
+
+// Desalocação
+delete map;
+delete p;
+
+// Com ponteiros inteligentes (Automático)
+std::unique_ptr&lt;Background&gt; bg(new Background(renderer));
+// Não precisa fazer delete - destrutor automático</code></pre>
+                </div>
+            </div>
+            
+            <!-- CONCEITOS POO SECTION -->
+            <div id="conceitos" class="section">
+                <h2>🎓 Conceitos de Orientação a Objeto</h2>
+                
+                <div class="classe-box">
+                    <div class="subsecao">1. Encapsulamento</div>
+                    <div class="subsecao-conteudo">
+                        Proteção de dados escondendo-os do mundo exterior:
+                    </div>
+                    <pre><code>class Mino {
+private:
+    Color m_color;
+    char m_value;
+    float animationProgress;
+    
+public:
+    Color &color();  // Acesso controlado
+    char &value();
+};
+
+// Usuário não pode acessar m_color diretamente
+// Deve usar color() - acesso controlado</code></pre>
+                    <div class="subsecao-conteudo">
+                        ✓ Proteção de dados<br>
+                        ✓ Validação de entrada<br>
+                        ✓ Flexibilidade de implementação
+                    </div>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="subsecao">2. Abstração</div>
+                    <div class="subsecao-conteudo">
+                        Esconde complexidade mostrando apenas interface essencial:
+                    </div>
+                    <pre><code>class TetrisMap {
+public:
+    void tetriminoAction(TetriminoAction action);  // Interface simples
+    void tick();
+    void draw(SDL_Renderer *renderer);
+    
+private:
+    // Complexidade escondida
+    bool validateTetriminoAction();
+    bool tetriminoCollides();
+    void eliminateCompleteRows();
+};</code></pre>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="subsecao">3. Modularidade</div>
+                    <div class="subsecao-conteudo">
+                        Projeto dividido em módulos independentes e coesos<br><br>
+                        
+                        <strong>Cliente:</strong> Menu, TetrisMap, Client, Background<br>
+                        <strong>Servidor:</strong> Server, Room, Player<br>
+                        <strong>Núcleo:</strong> Tetrimino, Color, Pos, Mino
+                    </div>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="subsecao">4. Reutilização de Código</div>
+                    <div class="subsecao-conteudo">
+                        Através de herança e composição:
+                    </div>
+                    <pre><code>// Herança - reutiliza comportamento
+class TetriminoI : public Tetrimino {
+    // Herda moveAction(), rotateAction(), undoPreviousAction()
+};
+
+// Composição - usa objetos dentro de outros
+class Menu {
+    std::unique_ptr&lt;Background&gt; bg;
+    std::unique_ptr&lt;Text&gt; text;
+};</code></pre>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="subsecao">5. Separação de Responsabilidades</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Classe</th>
+                                <th>Responsabilidade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>Color</code></td>
+                                <td>Gerenciar cores RGBA</td>
+                            </tr>
+                            <tr>
+                                <td><code>Pos</code></td>
+                                <td>Representar posições</td>
+                            </tr>
+                            <tr>
+                                <td><code>Mino</code></td>
+                                <td>Representar bloco individual</td>
+                            </tr>
+                            <tr>
+                                <td><code>Tetrimino</code></td>
+                                <td>Lógica de peça de Tetris</td>
+                            </tr>
+                            <tr>
+                                <td><code>TetrisMap</code></td>
+                                <td>Gerenciar mapa e jogo</td>
+                            </tr>
+                            <tr>
+                                <td><code>Client</code></td>
+                                <td>Comunicação cliente</td>
+                            </tr>
+                            <tr>
+                                <td><code>Server</code></td>
+                                <td>Comunicação servidor</td>
+                            </tr>
+                            <tr>
+                                <td><code>Player</code></td>
+                                <td>Representar jogador</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="subsecao">6. Composição</div>
+                    <div class="subsecao-conteudo">
+                        Usar objetos dentro de objetos:
+                    </div>
+                    <pre><code>class TetrisMap {
+    Tetrimino *tetrimino;        // Composição
+    Text *text;                  // Composição
+    vector&lt;Tetrimino *&gt; queue;   // Composição
+};
+
+class Menu {
+    unique_ptr&lt;Background&gt; bg;   // Composição
+    unique_ptr&lt;Text&gt; text;       // Composição
+};</code></pre>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="subsecao">7. Construtores e Destrutores</div>
+                    <div class="subsecao-conteudo">
+                        Inicialização segura e limpeza de recursos:
+                    </div>
+                    <pre><code>class Color {
+public:
+    Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+    Color(uint32_t hex);
+    Color();  // Construtores sobrecarregados
+};
+
+class Client {
+public:
+    Client(const char *hostname, int port);  // Inicializa
+    ~Client();                               // Fecha conexão
+};
+
+class Tetrimino {
+public:
+    virtual ~Tetrimino() = default;  // Destrutor virtual
+};</code></pre>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="subsecao">8. Métodos Estáticos</div>
+                    <div class="subsecao-conteudo">
+                        Métodos que pertencem à classe, não à instância:
+                    </div>
+                    <pre><code>// Factory method estático
+static Tetrimino *generateTetriminoFrom(char c);
+
+// Método de Color
+static Color fromTetrimino(char c);
+
+// Uso:
+Color cor = Color::fromTetrimino('I');  // Sem instância
+Tetrimino *piece = Tetrimino::generateTetriminoFrom('T');</code></pre>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="subsecao">9. Thread-Safety (Concorrência)</div>
+                    <div class="subsecao-conteudo">
+                        Em MenuRoom:
+                    </div>
+                    <pre><code>class MenuRoom {
+private:
+    mutex mux;  // Mutex para sincronização
+    int status;
+
+public:
+    void setStatus(int new_status) {
+        // Lock automático garante thread-safety
+    }
+};</code></pre>
+                </div>
+                
+                <div class="classe-box">
+                    <div class="subsecao">10. Getters e Setters</div>
+                    <div class="subsecao-conteudo">
+                        Padrão para acesso controlado a atributos:
+                    </div>
+                    <pre><code>class Player {
+private:
+    int i_watching;
+    int i_watched_by;
+    bool alive;
+    
+public:
+    void set_watching(int val);
+    int get_watching();
+    void set_alive(bool val);
+    bool is_alive();
+};</code></pre>
+                </div>
+            </div>
+            
+            <!-- RESUMO SECTION -->
+            <div id="resumo" class="section">
+                <h2>📊 Tabela de Resumo de Conceitos</h2>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Conceito</th>
+                            <th>Definição</th>
+                            <th>Exemplo do Projeto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Classe</strong></td>
+                            <td>Estrutura que agrupa dados e métodos</td>
+                            <td>Color, Tetrimino, TetrisMap</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Objeto</strong></td>
+                            <td>Instância de uma classe</td>
+                            <td>Um Color específico (vermelho)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Atributo</strong></td>
+                            <td>Dado encapsulado</td>
+                            <td>m_color, m_row, m_col</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Método</strong></td>
+                            <td>Função dentro de classe</td>
+                            <td>draw(), moveAction()</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Encapsulamento</strong></td>
+                            <td>Proteção com public/private</td>
+                            <td>Atributos privados + métodos públicos</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Herança</strong></td>
+                            <td>Subclasses herdam de classe base</td>
+                            <td>TetriminoI extends Tetrimino</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Polimorfismo</strong></td>
+                            <td>Mesmo método, comportamentos diferentes</td>
+                            <td>getMinos() em cada tipo de peça</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Abstração</strong></td>
+                            <td>Esconder complexidade</td>
+                            <td>Interface simples de TetrisMap</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Composição</strong></td>
+                            <td>Usar objetos dentro de outros</td>
+                            <td>Background dentro de Menu</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ponteiro</strong></td>
+                            <td>Referência a endereço em memória</td>
+                            <td>Tetrimino *tetrimino</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ponteiro Inteligente</strong></td>
+                            <td>Gerenciamento automático</td>
+                            <td>unique_ptr&lt;Background&gt; bg</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Referência</strong></td>
+                            <td>Alias para variável</td>
+                            <td>int &row()</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Virtual</strong></td>
+                            <td>Método pode ser sobrescrito</td>
+                            <td>virtual getMinos() = 0</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Sobrecarga</strong></td>
+                            <td>Mesmo nome, parâmetros diferentes</td>
+                            <td>Múltiplos construtores de Color</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Override</strong></td>
+                            <td>Subclasse implementa método virtual</td>
+                            <td>TetriminoI::getMinos()</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Thread-Safety</strong></td>
+                            <td>Proteção contra concorrência</td>
+                            <td>mutex mux em MenuRoom</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- CONCLUSÃO -->
+            <div class="conclusao">
+                <h4>✅ Conclusão - Conceitos Aplicados no Projeto</h4>
+                <ul>
+                    <li>✓ <strong>Classes e Objetos</strong> - Estruturação modular completa</li>
+                    <li>✓ <strong>Herança</strong> - Hierarquia bem definida de Tetriminos</li>
+                    <li>✓ <strong>Polimorfismo</strong> - Métodos virtuais e sobrecarga extensiva</li>
+                    <li>✓ <strong>Encapsulamento</strong> - Dados privados, acesso controlado</li>
+                    <li>✓ <strong>Ponteiros</strong> - Brutos e inteligentes, gerenciamento eficiente</li>
+                    <li>✓ <strong>Composição</strong> - Objetos dentro de objetos</li>
+                    <li>✓ <strong>Abstração</strong> - Interfaces claras e bem definidas</li>
+                    <li>✓ <strong>Padrões de Design</strong> - Factory, Enum Pattern</li>
+                    <li>✓ <strong>Thread-safety</strong> - Proteção com mutex</li>
+                    <li>✓ <strong>Ponteiros Inteligentes</strong> - C++11 features</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p>📚 Documento de Estudo - Programação Orientada a Objetos</p>
+            <p>Projeto: Multiplayer Tetris Game | Data: Janeiro 2026</p>
+            <p>Gerado para fins educacionais e de apresentação</p>
+        </div>
+    </div>
+</body>
+</html>
