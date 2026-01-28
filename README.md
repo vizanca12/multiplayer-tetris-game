@@ -60,7 +60,7 @@ sudo apt-get install libsdl2-dev libsdl2-ttf-dev
 
 ### 1. Clonez le dépôt
 ```bash
-git clone <votre-depot>
+git clone https://github.com/vizanca12/multiplayer-tetris-game.git
 cd multiplayer-tetris-game
 ```
 
@@ -267,3 +267,4 @@ Ce projet est développé à des fins éducationnelles.
 ---
 
 **Dernière mise à jour** : Janvier 2026
+
