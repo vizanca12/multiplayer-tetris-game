@@ -5,13 +5,14 @@
 #include <text.hpp>
 #include <tetrimino.hpp>
 #include <background.hpp>
-
-using namespace std;
+#include <memory> // Necessário para unique_ptr
 
 class Menu
 {
 public:
     Menu();
+    ~Menu() = default; // Destrutor pertinente (Exigência do Barramento)
+
     void input();
     void render();
     void close();
@@ -19,10 +20,14 @@ public:
     int getChoice();
 
 private:
-    SDL_Renderer *renderer;
-    SDL_Window *window;
-    Background *bg;
-    Text *textSmall, *textSmaller, *textBig;
+    SDL_Renderer *renderer; // Mantemos cru pois o SDL gerencia o renderer
+    SDL_Window *window;     // Mantemos cru pelo mesmo motivo
+    
+    // Ponteiros Inteligentes 
+    std::unique_ptr<Background> bg;
+    std::unique_ptr<Text> textSmall;
+    std::unique_ptr<Text> textSmaller;
+    std::unique_ptr<Text> textBig;
 
     bool hasMadeChoice;
     bool menuShowing;

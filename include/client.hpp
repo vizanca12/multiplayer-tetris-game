@@ -15,6 +15,7 @@ class Client
 {
 public:
     Client(const char *hostname, int port);
+    ~Client();
     int recv(char *msg, int msg_size);
     int send(char *msg, int msg_size);
     bool is_connected();

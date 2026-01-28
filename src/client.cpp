@@ -58,3 +58,9 @@ void Client::disconnect()
 
     connected = false;
 }
+
+Client::~Client() {
+    if (connected) {
+        close(m_socket);
+    }
+}

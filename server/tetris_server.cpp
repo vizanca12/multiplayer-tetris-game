@@ -123,7 +123,7 @@ void TetrisServer::handle(Player *player)
     bool connected = true;
     int res = 1;
 
-    while (connected && players_alive > 1)
+    while (connected)
     {
         // Get code sent by client, can be CODE_PLAYER_MAP or CODE_PLAYER_DEAD
         res = server->recv(player->get_socket(), &code, 1);

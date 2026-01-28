@@ -14,11 +14,12 @@ Menu::Menu()
     hasMadeChoice = false;
     menuShowing = true;
 
-    textSmaller = new Text(18);
-    textSmall = new Text(24);
-    textBig = new Text(60);
+    textSmaller = std::make_unique<Text>(18);
+    textSmall   = std::make_unique<Text>(24);
+    textBig     = std::make_unique<Text>(60);
 
-    bg = new Background(renderer);
+    // Para o background:
+    bg = std::make_unique<Background>(renderer);
 
     while (menuShowing)
     {

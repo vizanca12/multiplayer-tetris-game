@@ -32,6 +32,7 @@ class Tetrimino
 {
 public:
     Tetrimino();
+    virtual ~Tetrimino() = default;
 
     // Rotates tetrimino using rot, and rotationPoint (number from 1 to 5)
     void rotateAction(TetriminoAction rot, int rotationPoint);
@@ -64,6 +65,8 @@ public:
     void draw(SDL_Renderer *renderer, int x, int y);
 
     static Tetrimino *generateTetriminoFrom(char c);
+
+    
 
 protected:
     char t_name;
